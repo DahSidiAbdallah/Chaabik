@@ -8,7 +8,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
 import { Footer } from './Footer';
 import { categories, listings as staticListings } from '../data';
-import { Target, Plus, Search, ChevronLeft, ChevronRight, ShieldCheck, CreditCard, Briefcase, UserCircle, BadgeCheck, Menu, X, List, LayoutGrid } from 'lucide-react';
+import { Target, Plus, ChevronLeft, ChevronRight, ShieldCheck, CreditCard, Briefcase, UserCircle, BadgeCheck, Menu, X, List, LayoutGrid, Filter, SlidersHorizontal } from 'lucide-react';
 import { supabase, isAuthenticated } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import ChaabikLogo from '../assets/Chaabik.png';
@@ -19,7 +19,6 @@ export function HomePage() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [searchBarCategory, setSearchBarCategory] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [listings, setListings] = useState(staticListings);
@@ -32,7 +31,13 @@ export function HomePage() {
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Filter states
+  const [priceRange, setPriceRange] = useState<{min: string, max: string}>({min: '', max: ''});
+  const [locationFilter, setLocationFilter] = useState('');
+  const [conditionFilter, setConditionFilter] = useState<string>('');
+  
   // Parse URL parameters for category filtering
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -85,7 +90,7 @@ export function HomePage() {
 
   // Initial fetch on component mount
   useEffect(() => {
-    async function fetchAllListingsAsync() { // Renamed to avoid confusion, and ensure it's async
+    async function fetchAllListingsAsync() {
       setIsLoading(true);
       try {
         console.log(t('listings.initialFetch'));
@@ -113,10 +118,6 @@ export function HomePage() {
           console.log(t('listings.databaseConnected', { count: data.length }));
           setDatabaseConnected(true);
           
-          data.forEach((item, index) => {
-            console.log(`Item ${index + 1}:`, item.id, item.title, item.category, item.createdAt);
-          });
-          
           const mappedProducts = data.map(product => ({
             id: product.id,
             title: product.title || "No Title",
@@ -127,7 +128,7 @@ export function HomePage() {
             image: product.image_url || "",
             condition: product.condition || "Unknown",
             features: Array.isArray(product.features) ? product.features : [],
-            createdAt: product.created_at, // Ensure createdAt is mapped
+            createdAt: product.created_at,
             is_sold: product.is_sold || false,
             seller: {
               name: product.seller?.name || 'Anonymous',
@@ -140,7 +141,6 @@ export function HomePage() {
           }));
           
           if (mappedProducts.length > 0) {
-            console.log("Setting mappedProducts:", mappedProducts.length);
             setListings(mappedProducts);
           } else {
             console.log(t('listings.noProductsFound'));
@@ -148,38 +148,21 @@ export function HomePage() {
           }
         }
       } catch (err: any) {
-        console.error("Error fetching listings (new catch):", err);
-        setListings(staticListings); // Fallback
+        console.error("Error fetching listings:", err);
+        setListings(staticListings);
       } finally {
         setIsLoading(false);
       }
     }
     
-    fetchAllListingsAsync(); // Call the async function
-  }, [t]); // t is used in console logs
+    fetchAllListingsAsync();
+  }, [t]);
 
   // Function to fetch items for a specific category
   const fetchCategoryItems = async (categoryId: string) => {
     setIsFetchingCategory(true);
     
     try {
-      console.log("Fetching items for category:", categoryId);
-      
-      // First, debug what categories exist in the database
-      const { data: allProducts, error: debugError } = await supabase
-        .from('products')
-        .select('id, category')
-        .order('created_at', { ascending: false });
-      
-      if (debugError) {
-        console.error(t('categories.errorFetchingCategory', { error: debugError.message }));
-      } else {
-        // Log unique categories in the database
-        const uniqueCategories = [...new Set(allProducts.map(p => p.category))];
-        console.log("Categories in database:", uniqueCategories);
-        console.log("Total products in database:", allProducts.length);
-      }
-      
       // Find the category object
       const categoryObj = categories.find(c => c.id === categoryId);
       if (!categoryObj) {
@@ -190,12 +173,7 @@ export function HomePage() {
       
       // Get all subcategory IDs for this category
       const subcategoryIds = categoryObj.subcategories.map(sub => sub.id);
-      console.log("Looking for subcategories:", subcategoryIds);
-      
-      // IMPORTANT FIX: Try both the main category ID and subcategory IDs
-      // Some databases might store the main category ID rather than subcategories
       const searchCategories = [categoryId, ...subcategoryIds];
-      console.log("Searching for any of these categories:", searchCategories);
       
       const { data, error } = await supabase
         .from('products')
@@ -215,8 +193,6 @@ export function HomePage() {
       
       if (error) {
         console.error(t('categories.errorFetchingItems', { error: error.message }));
-        // Don't immediately fall back to static data
-        // Let's try a different approach first
         
         // Try a simpler query with just the main category
         const { data: simpleData, error: simpleError } = await supabase
@@ -226,7 +202,7 @@ export function HomePage() {
         
         if (simpleError || !simpleData || simpleData.length === 0) {
           console.log(t('categories.noItemsFound'));
-          // Now fall back to static data
+          // Fall back to static data
           const filteredStatic = staticListings.filter(listing => 
             searchCategories.includes(listing.category)
           );
@@ -354,7 +330,7 @@ export function HomePage() {
     }
   };
 
-  // Handle category selection - updated to be more robust
+  // Handle category selection
   const handleCategorySelect = (categoryId: string) => {
     if (selectedCategory === categoryId) {
       // If clicking the same category, just refresh the data
@@ -372,6 +348,10 @@ export function HomePage() {
     setIsLoading(true);
     setSearchQuery('');  // Clear any previous search
     setSearchSubmitted(false); // Reset search state
+    // Reset filters
+    setPriceRange({min: '', max: ''});
+    setLocationFilter('');
+    setConditionFilter('');
     navigate('/');
     
     // Fetch all listings with improved error handling and debugging
@@ -398,11 +378,6 @@ export function HomePage() {
         } else {
           console.log("Successfully fetched all listings:", data.length);
           
-          // Log all fetched items to debug
-          data.forEach((item, index) => {
-            console.log(`Item ${index + 1}:`, item.id, item.title, item.category);
-          });
-          
           if (data.length > 0) {
             const mappedProducts = data.map(product => ({
               id: product.id,
@@ -425,9 +400,6 @@ export function HomePage() {
               }
             }));
             
-            // Check the mapped products too
-            console.log("Mapped products:", mappedProducts.length);
-            
             setListings(mappedProducts);
           } else {
             console.log("No products found in database, using static listings");
@@ -444,27 +416,23 @@ export function HomePage() {
       });
   };
 
-  // Replace the direct setSearchQuery function with this new handler
+  // Handle search submission
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
-      // If query is empty, reset to all listings or current category view
       setSearchQuery('');
       setSearchSubmitted(false);
       if (selectedCategory) {
         fetchCategoryItems(selectedCategory); 
       } else {
-        // This should ideally re-fetch all listings if no category is selected
-        // Or use the initially fetched full list if stored separately
-        // For now, let's assume fetchAllListings can be called or listings state has full list
-        // This part might need refinement based on how `fetchAllListings` is structured
-        // and if it can be called without side effects of `useEffect`.
+        handleAllCategories();
       }
       return;
     }
     
+    setSearchQuery(query);
     setIsSearching(true);
     setSearchSubmitted(true);
-    console.log("Searching for:", query, "in category:", searchBarCategory);
+    console.log("Searching for:", query);
     
     try {
       let queryBuilder = supabase.from('products').select(`
@@ -480,12 +448,16 @@ export function HomePage() {
       `);
       
       // Apply text search for title and description
-      // Using .or() for searching in multiple columns
       queryBuilder = queryBuilder.or(`title.ilike.%${query}%,description.ilike.%${query}%`);
       
-      // Filter by category if one is selected in the search bar
-      if (searchBarCategory) {
-        queryBuilder = queryBuilder.eq('category', searchBarCategory);
+      // Apply category filter if selected
+      if (selectedCategory) {
+        const categoryObj = categories.find(c => c.id === selectedCategory);
+        if (categoryObj) {
+          const subcategoryIds = categoryObj.subcategories.map(sub => sub.id);
+          const searchCategories = [selectedCategory, ...subcategoryIds];
+          queryBuilder = queryBuilder.in('category', searchCategories);
+        }
       }
       
       const { data, error } = await queryBuilder.order('created_at', { ascending: false });
@@ -524,7 +496,7 @@ export function HomePage() {
         }
       }
       
-    } catch (err: any) { // Typed err
+    } catch (err: any) {
       console.error('Search error:', err);
       setError(t('search.searchError'));
       // Fallback to static search if db search fails
@@ -534,32 +506,49 @@ export function HomePage() {
     }
   };
 
-  // Make sure the search filtering is only applied after submit
+  // Apply filters to the listings
   const filteredListings = useMemo(() => {
-    // If a search was submitted, filter by the search query
-    if (searchSubmitted && searchQuery) {
-      return listings.filter((listing) => {
-        const searchFields = [
-          listing.title,
-          listing.description,
-          listing.location,
-          listing.condition,
-          ...(listing.features || [])
-        ];
-
-        return searchFields.some(field =>
-          field && field.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-      });
+    let results = [...listings];
+    
+    // If a search was submitted, we've already filtered by the search query in the API call
+    
+    // Apply price filter
+    if (priceRange.min && !isNaN(Number(priceRange.min))) {
+      results = results.filter(item => item.price >= Number(priceRange.min));
     }
     
-    // Otherwise, return all listings (or filtered by category if applicable)
-    return listings;
-  }, [searchQuery, listings, searchSubmitted]);
+    if (priceRange.max && !isNaN(Number(priceRange.max))) {
+      results = results.filter(item => item.price <= Number(priceRange.max));
+    }
+    
+    // Apply location filter
+    if (locationFilter) {
+      results = results.filter(item => 
+        item.location.toLowerCase().includes(locationFilter.toLowerCase())
+      );
+    }
+    
+    // Apply condition filter
+    if (conditionFilter) {
+      results = results.filter(item => item.condition === conditionFilter);
+    }
+    
+    return results;
+  }, [listings, priceRange, locationFilter, conditionFilter]);
 
   const recentListings = useMemo(() => {
     return listings.slice(0, 5); // First 5 listings for "Listed recently"
   }, [listings]);
+
+  // Reset all filters
+  const resetFilters = () => {
+    setPriceRange({min: '', max: ''});
+    setLocationFilter('');
+    setConditionFilter('');
+  };
+
+  // Check if any filters are applied
+  const hasActiveFilters = priceRange.min || priceRange.max || locationFilter || conditionFilter;
 
   useEffect(() => {
     // Check authentication status immediately and subscribe to auth changes
@@ -697,8 +686,6 @@ export function HomePage() {
                 <h2 className="text-blue-900 font-bold text-base xs:text-lg sm:text-xl mb-2 xs:mb-3 sm:mb-4">{t('search.findItems')}</h2>
                 <SearchBar 
                   onSearch={handleSearch}
-                  selectedCategory={searchBarCategory}
-                  onSelectCategory={setSearchBarCategory}
                   isSearching={isSearching}
                 />
                 <div className="flex flex-wrap gap-1 xs:gap-2 mt-2 xs:mt-3 sm:mt-4">
@@ -725,7 +712,7 @@ export function HomePage() {
         {/* Listings Grid / List */}
         <section className="py-6 xs:py-8 sm:py-12">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-            <div className="flex justify-between items-center mb-4 xs:mb-6 sm:mb-8">
+            <div className="flex flex-wrap justify-between items-center mb-4 xs:mb-6 sm:mb-8 gap-2">
               <h2 className="text-xl xs:text-2xl font-bold text-gray-900">
                 {selectedCategory ? 
                   t(`categories.${categories.find(c => c.id === selectedCategory)?.name}`) : 
@@ -737,24 +724,144 @@ export function HomePage() {
                   ({filteredListings.length} {t('common.items')})
                 </span>
               </h2>
-              {/* View mode toggle buttons */}
+              
               <div className="flex items-center space-x-2">
-                <button 
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                  title={t('viewSwitcher.grid')}
+                {/* Filter toggle button */}
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700 text-sm"
                 >
-                  <LayoutGrid className="w-5 h-5" />
+                  <SlidersHorizontal className="w-4 h-4" />
+                  {showFilters ? t('common.hideFilters') : t('common.showFilters')}
                 </button>
-                <button 
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
-                  title={t('viewSwitcher.list')}
-                >
-                  <List className="w-5 h-5" />
-                </button>
+                
+                {/* View mode toggle buttons */}
+                <div className="flex items-center space-x-2">
+                  <button 
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-md ${viewMode === 'grid' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                    title={t('viewSwitcher.grid')}
+                  >
+                    <LayoutGrid className="w-5 h-5" />
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-md ${viewMode === 'list' ? 'bg-yellow-400 text-black' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                    title={t('viewSwitcher.list')}
+                  >
+                    <List className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
+            
+            {/* Filters section */}
+            {showFilters && (
+              <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-medium text-gray-700">{t('filters.filterBy')}</h3>
+                  {hasActiveFilters && (
+                    <button 
+                      onClick={resetFilters}
+                      className="text-sm text-blue-600 hover:text-blue-800"
+                    >
+                      {t('filters.clearAll')}
+                    </button>
+                  )}
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {/* Price Range Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('filters.price')}
+                    </label>
+                    <div className="flex space-x-2">
+                      <div className="w-1/2">
+                        <input
+                          type="number"
+                          placeholder={t('filters.min')}
+                          className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                          value={priceRange.min}
+                          onChange={(e) => setPriceRange({...priceRange, min: e.target.value})}
+                        />
+                      </div>
+                      <div className="w-1/2">
+                        <input
+                          type="number"
+                          placeholder={t('filters.max')}
+                          className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                          value={priceRange.max}
+                          onChange={(e) => setPriceRange({...priceRange, max: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Location Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('filters.location')}
+                    </label>
+                    <input
+                      type="text"
+                      placeholder={t('filters.enterLocation')}
+                      className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                      value={locationFilter}
+                      onChange={(e) => setLocationFilter(e.target.value)}
+                    />
+                  </div>
+                  
+                  {/* Condition Filter */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {t('filters.condition')}
+                    </label>
+                    <select
+                      className="w-full p-2 border border-gray-300 rounded-md text-sm"
+                      value={conditionFilter}
+                      onChange={(e) => setConditionFilter(e.target.value)}
+                    >
+                      <option value="">{t('filters.allConditions')}</option>
+                      <option value="New">{t('product.conditionNew')}</option>
+                      <option value="Like New">{t('product.conditionLikeNew')}</option>
+                      <option value="Good">{t('product.conditionGood')}</option>
+                      <option value="Fair">{t('product.conditionFair')}</option>
+                      <option value="Poor">{t('product.conditionPoor')}</option>
+                    </select>
+                  </div>
+                </div>
+                
+                {/* Active filters display */}
+                {hasActiveFilters && (
+                  <div className="mt-4 pt-3 border-t border-gray-200">
+                    <div className="text-sm text-gray-500 mb-2">{t('filters.filterApplied')}:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {priceRange.min && (
+                        <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                          {t('filters.min')}: {priceRange.min} MRU
+                        </div>
+                      )}
+                      {priceRange.max && (
+                        <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                          {t('filters.max')}: {priceRange.max} MRU
+                        </div>
+                      )}
+                      {locationFilter && (
+                        <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                          {t('filters.location')}: {locationFilter}
+                        </div>
+                      )}
+                      {conditionFilter && (
+                        <div className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                          {t('filters.condition')}: {t(`product.condition${conditionFilter.replace(/\s/g, '')}`)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             
             {!databaseConnected && (
               <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded mb-6">
@@ -900,12 +1007,12 @@ function PopupMenuCard({
 }: { 
   onClose: () => void;
   user: User | null;
-  t: any; // Consider a more specific type if available from i18next
+  t: any;
   selectedCategory: string | null;
   handleAllCategories: () => void;
   handleCategorySelect: (categoryId: string) => void;
-  categories: any[]; // Define a proper type for category
-  i18n: any; // Consider a more specific type from i18next
+  categories: any[];
+  i18n: any;
 }) {
   return (
     <div
