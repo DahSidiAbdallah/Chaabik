@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { ArrowLeft, Eye, EyeOff, Check, X, Mail, KeyRound, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export function Auth() {
@@ -20,11 +20,9 @@ export function Auth() {
     password?: string;
     phone?: string;
   }>({});
-  const [mode, setMode] = useState<'signin' | 'signup' | 'forgot-password' | 'reset-password'>(
+  const [mode, setMode] = useState<'signin' | 'signup'>(
     location.state?.mode === 'signup' ? 'signup' : 'signin'
   );
-  const [resetSent, setResetSent] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Password validation requirements (removed special character requirement)
   const passwordRequirements = [
@@ -138,9 +136,6 @@ export function Auth() {
       
       // All checks passed
       return true;
-    } else if (mode === 'forgot-password') {
-      // For forgot password, just need a valid email
-      return email.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
     
     // For sign in, basic validation
@@ -150,7 +145,6 @@ export function Auth() {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSuccessMessage(null);
     
     // Run validation for signup
     if (mode === 'signup' && !isFormValid()) {
@@ -206,25 +200,13 @@ export function Auth() {
             ]);
           if (profileError) throw profileError;
         }
-      } else if (mode === 'signin') {
+      } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (signInError) throw signInError;
-      } else if (mode === 'forgot-password') {
-        const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo: `${window.location.origin}/auth?mode=reset-password`,
-        });
-        
-        if (resetError) throw resetError;
-        
-        setResetSent(true);
-        setSuccessMessage(t('auth.resetEmailSent'));
-        setLoading(false);
-        return;
       }
-      
       if (location.state?.returnTo) {
         navigate(location.state.returnTo);
       } else {
@@ -252,10 +234,7 @@ export function Auth() {
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10">
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-8">
-              {mode === 'signin' ? t('auth.signIn') : 
-               mode === 'signup' ? t('auth.createAccount') : 
-               mode === 'forgot-password' ? t('auth.forgotPassword') : 
-               t('auth.resetPassword')}
+              {mode === 'signin' ? t('auth.signIn') : t('auth.createAccount')}
             </h2>
           </div>
 
@@ -265,218 +244,177 @@ export function Auth() {
             </div>
           )}
 
-          {successMessage && (
-            <div className="mb-4 p-4 bg-green-50 border-l-4 border-green-400 text-green-700">
-              <p className="text-sm">{successMessage}</p>
-            </div>
-          )}
-
-          {mode === 'forgot-password' && resetSent ? (
-            <div className="text-center">
-              <div className="bg-blue-50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Mail className="h-8 w-8 text-blue-500" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('auth.checkYourEmail')}</h3>
-              <p className="text-gray-600 mb-6">{t('auth.resetInstructions')}</p>
-              <button
-                onClick={() => setMode('signin')}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                {t('auth.backToSignIn')}
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleAuth} className="space-y-6">
-              {mode === 'signup' && (
-                <>
-                  <div>
-                    <label htmlFor="name\" className="block text-sm font-medium text-gray-700">
-                      {t('auth.name')}
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-400 focus:ring focus:ring-yellow-200 focus:ring-opacity-50"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                      {t('auth.phone')}
-                    </label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">+222</span>
-                      </div>
-                      <input
-                        id="phone"
-                        type="tel"
-                        value={phone.replace(/^\+222/, '')}
-                        onChange={(e) => {
-                          // Only allow digits
-                          const value = e.target.value.replace(/\D/g, '');
-                          // Format with country code
-                          const formattedValue = formatPhoneNumber(`+222${value}`);
-                          setPhone(formattedValue);
-                          if (formattedValue) validatePhone(formattedValue);
-                        }}
-                        className={`block w-full rounded-md pl-14 ${
-                          validationErrors.phone 
-                            ? 'border-red-300 pr-10 focus:border-red-500 focus:ring-red-500' 
-                            : 'border-gray-300 focus:border-yellow-400 focus:ring focus:ring-yellow-200'
-                        } shadow-sm focus:ring-opacity-50`}
-                        required
-                        maxLength={8}
-                        placeholder="2XXXXXXX"
-                      />
-                      {validationErrors.phone && (
-                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                          <X className="h-5 w-5 text-red-500" />
-                        </div>
-                      )}
-                    </div>
-                    {validationErrors.phone ? (
-                      <p className="mt-1 text-sm text-red-600">
-                        {validationErrors.phone}
-                      </p>
-                    ) : (
-                      <p className="mt-1 text-sm text-gray-500">
-                        {t('auth.phoneFormatMauritania')}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  {t('auth.email')}
-                </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
+          <form onSubmit={handleAuth} className="space-y-6">
+            {mode === 'signup' && (
+              <>
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    {t('auth.name')}
+                  </label>
                   <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className={`block w-full rounded-md ${
-                      validationErrors.email 
-                        ? 'border-red-300 pr-10 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-300 focus:border-yellow-400 focus:ring focus:ring-yellow-200'
-                    } shadow-sm focus:ring-opacity-50`}
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-400 focus:ring focus:ring-yellow-200 focus:ring-opacity-50"
                     required
                   />
-                  {validationErrors.email && (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                      <X className="h-5 w-5 text-red-500" />
-                    </div>
-                  )}
                 </div>
-                {validationErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">
-                    {validationErrors.email}
-                  </p>
-                )}
-              </div>
 
-              {(mode === 'signin' || mode === 'signup') && (
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    {t('auth.password')}
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                    {t('auth.phone')}
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">+222</span>
+                    </div>
                     <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className={`block w-full rounded-md ${
-                        validationErrors.password 
+                      id="phone"
+                      type="tel"
+                      value={phone.replace(/^\+222/, '')}
+                      onChange={(e) => {
+                        // Only allow digits
+                        const value = e.target.value.replace(/\D/g, '');
+                        // Format with country code
+                        const formattedValue = formatPhoneNumber(`+222${value}`);
+                        setPhone(formattedValue);
+                        if (formattedValue) validatePhone(formattedValue);
+                      }}
+                      className={`block w-full rounded-md pl-14 ${
+                        validationErrors.phone 
                           ? 'border-red-300 pr-10 focus:border-red-500 focus:ring-red-500' 
                           : 'border-gray-300 focus:border-yellow-400 focus:ring focus:ring-yellow-200'
                       } shadow-sm focus:ring-opacity-50`}
                       required
+                      maxLength={8}
+                      placeholder="2XXXXXXX"
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
+                    {validationErrors.phone && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <X className="h-5 w-5 text-red-500" />
+                      </div>
+                    )}
                   </div>
-                  {validationErrors.password && (
+                  {validationErrors.phone ? (
                     <p className="mt-1 text-sm text-red-600">
-                      {validationErrors.password}
+                      {validationErrors.phone}
+                    </p>
+                  ) : (
+                    <p className="mt-1 text-sm text-gray-500">
+                      {t('auth.phoneFormatMauritania')}
                     </p>
                   )}
                 </div>
-              )}
+              </>
+            )}
 
-              {/* Show password requirements for signup */}
-              {mode === 'signup' && password.length > 0 && (
-                <div className="bg-gray-50 p-3 rounded-md">
-                  <p className="text-sm font-medium text-gray-700 mb-2">{t('auth.passwordRequirements')}</p>
-                  <ul className="space-y-1">
-                    {passwordRequirements.map((requirement) => (
-                      <li key={requirement.id} className="flex items-center text-sm">
-                        {requirement.test(password) ? (
-                          <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
-                        ) : (
-                          <X className="h-4 w-4 text-red-500 mr-2 flex-shrink-0" />
-                        )}
-                        <span className={requirement.test(password) ? 'text-green-700' : 'text-red-600'}>
-                          {requirement.label}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                {t('auth.email')}
+              </label>
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`block w-full rounded-md ${
+                    validationErrors.email 
+                      ? 'border-red-300 pr-10 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:border-yellow-400 focus:ring focus:ring-yellow-200'
+                  } shadow-sm focus:ring-opacity-50`}
+                  required
+                />
+                {validationErrors.email && (
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <X className="h-5 w-5 text-red-500" />
+                  </div>
+                )}
+              </div>
+              {validationErrors.email && (
+                <p className="mt-1 text-sm text-red-600">
+                  {validationErrors.email}
+                </p>
               )}
+            </div>
 
-              {/* Forgot password link */}
-              {mode === 'signin' && (
-                <div className="flex items-center justify-end">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMode('forgot-password');
-                      setError(null);
-                    }}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-500"
-                  >
-                    {t('auth.forgotPassword')}
-                  </button>
-                </div>
-              )}
-
-              <div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                {t('auth.password')}
+              </label>
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`block w-full rounded-md ${
+                    validationErrors.password 
+                      ? 'border-red-300 pr-10 focus:border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:border-yellow-400 focus:ring focus:ring-yellow-200'
+                  } shadow-sm focus:ring-opacity-50`}
+                  required
+                />
                 <button
-                  type="submit"
-                  disabled={loading || (mode === 'forgot-password' && !isFormValid())}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      {t('common.loading')}
-                    </div>
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5 text-gray-400" />
                   ) : (
-                    mode === 'signin' ? t('auth.signIn') : 
-                    mode === 'signup' ? t('auth.createAccount') : 
-                    mode === 'forgot-password' ? t('auth.sendResetLink') : 
-                    t('auth.resetPassword')
+                    <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </button>
               </div>
-            </form>
-          )}
+              {validationErrors.password && (
+                <p className="mt-1 text-sm text-red-600">
+                  {validationErrors.password}
+                </p>
+              )}
+              
+              {/* Add forgot password link */}
+              {mode === 'signin' && (
+                <div className="text-right mt-1">
+                  <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-800">
+                    Mot de passe oublié?
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Show password requirements for signup */}
+            {mode === 'signup' && password.length > 0 && (
+              <div className="bg-gray-50 p-3 rounded-md">
+                <p className="text-sm font-medium text-gray-700 mb-2">{t('auth.passwordRequirements')}</p>
+                <ul className="space-y-1">
+                  {passwordRequirements.map((requirement) => (
+                    <li key={requirement.id} className="flex items-center text-sm">
+                      {requirement.test(password) ? (
+                        <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                      ) : (
+                        <X className="h-4 w-4 text-red-500 mr-2 flex-shrink-0" />
+                      )}
+                      <span className={requirement.test(password) ? 'text-green-700' : 'text-red-600'}>
+                        {requirement.label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              >
+                {loading ? t('common.loading') : mode === 'signin' ? t('auth.signIn') : t('auth.createAccount')}
+              </button>
+            </div>
+          </form>
 
           <div className="mt-6">
             <div className="relative">
@@ -485,37 +423,22 @@ export function Auth() {
               </div>
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">
-                  {mode === 'signin' ? t('auth.noAccount') : 
-                   mode === 'signup' ? t('auth.haveAccount') : 
-                   t('auth.rememberPassword')}
+                  {mode === 'signin' ? t('auth.noAccount') : t('auth.haveAccount')}
                 </span>
               </div>
             </div>
 
             <div className="mt-6">
-              {mode === 'forgot-password' ? (
-                <button
-                  onClick={() => {
-                    setMode('signin');
-                    setError(null);
-                    setResetSent(false);
-                  }}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                >
-                  {t('auth.backToSignIn')}
-                </button>
-              ) : (
-                <button
-                  onClick={() => {
-                    setMode(mode === 'signin' ? 'signup' : 'signin');
-                    setError(null);
-                    setValidationErrors({});
-                  }}
-                  className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
-                >
-                  {mode === 'signin' ? t('auth.signUp') : t('auth.signInInstead')}
-                </button>
-              )}
+              <button
+                onClick={() => {
+                  setMode(mode === 'signin' ? 'signup' : 'signin');
+                  setError(null);
+                  setValidationErrors({});
+                }}
+                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+              >
+                {mode === 'signin' ? t('auth.signUp') : t('auth.signInInstead')}
+              </button>
             </div>
           </div>
         </div>
