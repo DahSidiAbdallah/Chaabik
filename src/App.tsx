@@ -14,13 +14,11 @@ import { UserProfile } from './components/UserProfile';
 import { ForgotPassword } from './components/ForgotPassword';
 import { ResetPassword } from './components/ResetPassword';
 
-
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen font-sans bg-white" dir={document.dir}>
         <Routes>
-          
           <Route path="/" element={<HomePage />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/auth" element={<Auth />} />

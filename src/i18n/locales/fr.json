@@ -150,11 +150,18 @@
     "forgotPassword": "Mot de passe oublié ?",
     "resetPassword": "Réinitialiser le mot de passe",
     "sendResetLink": "Envoyer le lien de réinitialisation",
-    "checkYourEmail": "Vérifiez votre email",
-    "resetInstructions": "Nous vous avons envoyé un email avec des instructions pour réinitialiser votre mot de passe. Veuillez vérifier votre boîte de réception.",
+    "resetInstructions": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "resetEmailSent": "E-mail de réinitialisation envoyé",
+    "resetEmailInstructions": "Vérifiez votre e-mail pour un lien de réinitialisation de mot de passe. S'il n'apparaît pas dans quelques minutes, vérifiez votre dossier spam.",
     "backToSignIn": "Retour à la connexion",
     "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
-    "resetEmailSent": "Email de réinitialisation envoyé. Veuillez vérifier votre boîte de réception."
+    "setNewPassword": "Définir un nouveau mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "passwordResetSuccess": "Réinitialisation du mot de passe réussie",
+    "passwordResetSuccessMessage": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+    "invalidResetLink": "Lien de réinitialisation invalide ou expiré"
   },
   "common": {
     "loading": "Chargement...",
@@ -187,9 +194,7 @@
     "databaseError": "Erreur de connexion à la base de données. Veuillez réessayer plus tard.",
     "uploadProblems": "Il y a eu des problèmes avec vos téléchargements",
     "deleteListingFailed": "Échec de la suppression de l'annonce",
-    "updateStatusFailed": "Échec de la mise à jour du statut",
-    "invalidEmail": "Veuillez entrer une adresse email valide",
-    "resetFailed": "Échec de l'envoi de l'email de réinitialisation. Veuillez réessayer."
+    "updateStatusFailed": "Échec de la mise à jour du statut"
   },
   "footer": {
     "rights": "Tous droits réservés",

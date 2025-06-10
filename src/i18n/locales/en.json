@@ -122,7 +122,15 @@
     "dragOrClick": "Drag and drop or click to upload",
     "mainImageHelp": "This will be your primary photo",
     "browseFiles": "Browse Files",
-    "publish": "Publish Listing"
+    "publish": "Publish Listing",
+    "status": "Status",
+    "dateAdded": "Date Added",
+    "available": "Available",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "readyToSell": "Ready to sell something? Create your first listing now."
   },
   "auth": {
     "signIn": "Sign In",
@@ -151,11 +159,18 @@
     "forgotPassword": "Forgot password?",
     "resetPassword": "Reset Password",
     "sendResetLink": "Send Reset Link",
-    "checkYourEmail": "Check your email",
-    "resetInstructions": "We've sent you an email with instructions to reset your password. Please check your inbox.",
-    "backToSignIn": "Back to Sign In",
+    "resetInstructions": "Enter your email address and we'll send you a link to reset your password.",
+    "resetEmailSent": "Reset email sent",
+    "resetEmailInstructions": "Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.",
+    "backToSignIn": "Back to sign in",
     "rememberPassword": "Remember your password?",
-    "resetEmailSent": "Password reset email sent. Please check your inbox."
+    "setNewPassword": "Set New Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordResetSuccess": "Password reset successful",
+    "passwordResetSuccessMessage": "Your password has been reset successfully. You can now sign in with your new password.",
+    "invalidResetLink": "Invalid or expired reset link"
   },
   "common": {
     "loading": "Loading...",
@@ -189,8 +204,8 @@
     "passwordRequirements": "Password doesn't meet all requirements",
     "databaseError": "Error connecting to database. Please try again later.",
     "uploadProblems": "There were problems with your uploads",
-    "invalidEmail": "Please enter a valid email address",
-    "resetFailed": "Failed to send password reset email. Please try again."
+    "deleteListingFailed": "Failed to delete listing",
+    "updateStatusFailed": "Failed to update status"
   },
   "footer": {
     "rights": "All rights reserved",
@@ -391,5 +406,13 @@
     "databaseCheckError": "Database check error: {{error}}",
     "demoMessage": "You're viewing demo listings. Connect to a database for real-time data.",
     "noListings": "No listings found"
+  },
+  "confirmation": {
+    "confirmDelete": "Confirm Delete",
+    "deleteConfirmMessage": "Are you sure you want to delete this listing? This action cannot be undone.",
+    "deleteSuccess": "Listing deleted successfully",
+    "deleteFailed": "Failed to delete listing",
+    "statusUpdateSuccess": "Status updated successfully",
+    "statusUpdateFailed": "Failed to update status"
   }
 }

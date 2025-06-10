@@ -181,27 +181,27 @@ export function UserProfile() {
 
           <div className="bg-white shadow rounded-lg overflow-hidden">
             {/* Profile Header */}
-            <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-gray-200 bg-gray-50">
-              <div className="flex flex-wrap items-center gap-5">
+            <div className="px-6 py-8 border-b border-gray-200 bg-gray-50">
+              <div className="flex items-center flex-wrap sm:flex-nowrap gap-5">
                 <div className="flex-shrink-0">
-                  <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
+                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-2xl font-bold">
                     {profile?.name?.charAt(0) || user?.email?.charAt(0) || '?'}
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
-                  <p className="text-xs sm:text-sm text-gray-500">
+                  <h1 className="text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
+                  <p className="text-sm text-gray-500">
                     {t('product.memberSince')} {new Date(profile?.created_at || user?.created_at).toLocaleDateString()}
                   </p>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-1">{user?.email}</p>
-                  <p className="text-xs sm:text-sm text-gray-500">{profile?.phone}</p>
+                  <p className="text-sm text-gray-500 mt-1">{user?.email}</p>
+                  <p className="text-sm text-gray-500">{profile?.phone}</p>
                 </div>
               </div>
             </div>
 
             {/* Listings */}
-            <div className="p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6">{t('product.myListings')}</h2>
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-6">{t('product.myListings')}</h2>
               
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
@@ -210,10 +210,10 @@ export function UserProfile() {
               )}
               
               {userListings.length === 0 ? (
-                <div className="text-center py-12 sm:py-16 px-4">
-                  <ShoppingBag className="w-10 sm:w-12 h-10 sm:h-12 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('product.noListings')}</h3>
-                  <p className="text-sm sm:text-base text-gray-500 mb-6">{t('product.readyToSell')}</p>
+                <div className="text-center py-16 px-4">
+                  <ShoppingBag className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('product.noListings')}</h3>
+                  <p className="text-gray-500 mb-6">{t('product.readyToSell')}</p>
                   <Link 
                     to="/add-product" 
                     className="px-4 py-2 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 transition-colors"
@@ -222,22 +222,22 @@ export function UserProfile() {
                   </Link>
                 </div>
               ) : (
-                <div className="overflow-x-auto -mx-4 sm:-mx-6">
-                  <div className="inline-block min-w-full align-middle">
+                <div className="overflow-x-auto -mx-6">
+                  <div className="inline-block min-w-full align-middle px-6">
                     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                       <table className="min-w-full divide-y divide-gray-300">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs sm:text-sm font-semibold text-gray-900 sm:pl-6">
+                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                               {t('product.title')}
                             </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-xs sm:text-sm font-semibold text-gray-900 hidden sm:table-cell">
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 hidden sm:table-cell">
                               {t('product.price')}
                             </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-xs sm:text-sm font-semibold text-gray-900">
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                               {t('product.status')}
                             </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-xs sm:text-sm font-semibold text-gray-900 hidden md:table-cell">
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 hidden md:table-cell">
                               {t('product.dateAdded')}
                             </th>
                             <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -248,25 +248,25 @@ export function UserProfile() {
                         <tbody className="divide-y divide-gray-200 bg-white">
                           {userListings.map((listing) => (
                             <tr key={listing.id} className={listing.is_sold ? "bg-gray-50" : ""}>
-                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-xs sm:text-sm sm:pl-6">
+                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                 <div className="flex items-center">
-                                  <div className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
+                                  <div className="h-10 w-10 flex-shrink-0">
                                     <img 
-                                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-md object-cover" 
+                                      className="h-10 w-10 rounded-md object-cover" 
                                       src={listing.image_url ? getImageUrl(listing.image_url) : '/placeholder-image.jpg'} 
                                       alt="" 
                                     />
                                   </div>
-                                  <div className="ml-2 sm:ml-4">
-                                    <div className="font-medium text-gray-900 line-clamp-1 max-w-[120px] sm:max-w-none">{listing.title}</div>
-                                    <div className="text-gray-500 text-xs hidden sm:block">{listing.category}</div>
+                                  <div className="ml-4 max-w-[150px] sm:max-w-xs">
+                                    <div className="font-medium text-gray-900 line-clamp-1">{listing.title}</div>
+                                    <div className="text-gray-500 hidden xs:block">{listing.category}</div>
                                   </div>
                                 </div>
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-xs sm:text-sm text-gray-500 hidden sm:table-cell">
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden sm:table-cell">
                                 <div className="text-gray-900 font-medium">{listing.price.toLocaleString()} MRU</div>
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-xs sm:text-sm text-gray-500">
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                 <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
                                   listing.is_sold 
                                     ? "bg-green-100 text-green-800" 
@@ -275,10 +275,10 @@ export function UserProfile() {
                                   {listing.is_sold ? t('product.sold') : t('product.available')}
                                 </span>
                               </td>
-                              <td className="whitespace-nowrap px-3 py-4 text-xs sm:text-sm text-gray-500 hidden md:table-cell">
+                              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 hidden md:table-cell">
                                 {new Date(listing.created_at).toLocaleDateString()}
                               </td>
-                              <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-xs sm:text-sm font-medium sm:pr-6">
+                              <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                                 <div className="flex justify-end space-x-2">
                                   <button
                                     onClick={() => handleToggleSoldStatus(listing.id, !!listing.is_sold)}
