@@ -1,0 +1,13 @@
+{
+  "common": {
+    "viewDetails": "View Details"
+  },
+  "product": {
+    "sold": "SOLD",
+    "soldOut": "Sold Out",
+    "conditionNew": "New",
+    "conditionUsed-LikeNew": "Used - Like New",
+    "conditionUsed-Good": "Used - Good",
+    "conditionUsed-Fair": "Used - Fair"
+  }
+} 
