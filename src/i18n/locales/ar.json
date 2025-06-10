@@ -214,7 +214,9 @@
     "deleteListingFailed": "فشل حذف الإعلان",
     "updateStatusFailed": "فشل تحديث الحالة",
     "uploadProblems": "كانت هناك مشاكل مع عمليات الرفع الخاصة بك",
-    "updateListingFailed": "فشل تحديث الإعلان"
+    "updateListingFailed": "فشل تحديث الإعلان",
+    "sellerNotFound": "لم يتم العثور على البائع",
+    "listingsNotFound": "تعذر تحميل إعلانات البائع"
   },
   "footer": {
     "rights": "جميع الحقوق محفوظة",
@@ -454,5 +456,14 @@
     "deleteFailed": "فشل حذف الإعلان",
     "statusUpdateSuccess": "تم تحديث الحالة بنجاح",
     "statusUpdateFailed": "فشل تحديث الحالة"
+  },
+  "sellerProfile": {
+    "title": "ملف البائع",
+    "listings": "إعلانات البائع",
+    "noListings": "لا توجد إعلانات",
+    "noListingsMessage": "لم يقم هذا البائع بنشر أي إعلانات بعد.",
+    "viewAllListings": "عرض جميع الإعلانات",
+    "contactInfo": "معلومات الاتصال",
+    "about": "عن البائع"
   }
 }

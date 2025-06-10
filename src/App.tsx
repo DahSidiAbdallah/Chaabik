@@ -14,6 +14,7 @@ import { UserProfile } from './components/UserProfile';
 import { ForgotPassword } from './components/ForgotPassword';
 import { ResetPassword } from './components/ResetPassword';
 import { EditListing } from './components/EditListing';
+import { SellerProfile } from './components/SellerProfile';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/seller/:id" element={<SellerProfile />} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -188,7 +188,8 @@
     "viewDetails": "View Details",
     "notProvided": "Not provided",
     "update": "Update",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "goBack": "Go Back"
   },
   "errors": {
     "invalidFileType": "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.",
@@ -211,7 +212,9 @@
     "uploadProblems": "There were problems with your uploads",
     "deleteListingFailed": "Failed to delete listing",
     "updateStatusFailed": "Failed to update status",
-    "updateListingFailed": "Failed to update listing"
+    "updateListingFailed": "Failed to update listing",
+    "sellerNotFound": "Seller not found",
+    "listingsNotFound": "Could not load seller's listings"
   },
   "footer": {
     "rights": "All rights reserved",
@@ -420,5 +423,14 @@
     "deleteFailed": "Failed to delete listing",
     "statusUpdateSuccess": "Status updated successfully",
     "statusUpdateFailed": "Failed to update status"
+  },
+  "sellerProfile": {
+    "title": "Seller Profile",
+    "listings": "Seller's Listings",
+    "noListings": "No Listings Found",
+    "noListingsMessage": "This seller hasn't posted any listings yet.",
+    "viewAllListings": "View All Listings",
+    "contactInfo": "Contact Information",
+    "about": "About the Seller"
   }
 }

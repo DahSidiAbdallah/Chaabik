@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Star, Phone, Clock, Package, BadgeCheck, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -107,6 +107,7 @@ export function ProductDetails() {
             seller_id: data.seller_id, // Store seller ID to check if current user is the seller
             createdAt: data.created_at, // Add createdAt for the product itself
             seller: {
+              id: data.seller?.id, // Add seller ID for linking to seller profile
               name: data.seller?.name || 'Anonymous',
               rating: data.seller?.rating || 4.5, // This will be removed from display
               phone: sellerPhone,
@@ -361,8 +362,13 @@ export function ProductDetails() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <div className="text-lg font-medium text-gray-900">{product.seller.name}</div>
-                    {/* REMOVED Seller Rating */}
+                    {/* Make the seller name a link to their profile */}
+                    <Link 
+                      to={`/seller/${product.seller.id}`}
+                      className="text-lg font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      {product.seller.name}
+                    </Link>
                   </div>
                 </div>
 
@@ -371,8 +377,6 @@ export function ProductDetails() {
                     <Clock className="w-4 h-4 mr-2" />
                     {t('product.memberSince')} {new Date(product.seller.joinedDate).toLocaleDateString()}
                   </div>
-                  {/* REMOVED Total Sales */}
-                  {/* REMOVED Response Rate */}
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 mr-2" />
                     {product.seller.phone || t('common.notProvided')}
@@ -393,6 +397,15 @@ export function ProductDetails() {
                   <Phone className="w-5 h-5" />
                   {t('product.contactSeller')}
                 </button>
+                
+                {/* Link to view all seller listings */}
+                <Link
+                  to={`/seller/${product.seller.id}`}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-800 py-3 px-4 rounded-lg transition-colors mt-2"
+                >
+                  <ShoppingBag className="w-5 h-5" />
+                  {t('sellerProfile.viewAllListings')}
+                </Link>
               </div>
             </div>
           </div>
