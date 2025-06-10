@@ -14,6 +14,17 @@ export function ForgotPassword() {
     setLoading(true);
     setMessage(null);
 
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage({
+        type: 'error',
+        text: 'Veuillez entrer une adresse e-mail valide'
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/reset-password`, {
         method: 'POST',
@@ -53,13 +64,13 @@ export function ForgotPassword() {
           className="mb-8 flex items-center text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
-          {t('common.backToHome')}
+          {t('auth.backToSignIn')}
         </Link>
 
         <div className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10">
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             <h2 className="text-center text-3xl font-extrabold text-gray-900 mb-8">
-              Réinitialiser votre mot de passe
+              Mot de passe oublié
             </h2>
           </div>
 

@@ -30,6 +30,18 @@ serve(async (req) => {
       );
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return new Response(
+        JSON.stringify({ error: "Format d'adresse e-mail invalide" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Create a Supabase client with the Admin key
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -42,18 +54,33 @@ serve(async (req) => {
       }
     );
 
+    // Check if the user exists
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.getUserByEmail(email);
+    
+    if (userError || !userData?.user) {
+      // Don't reveal if the email exists or not for security reasons
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          message: "Si cette adresse e-mail est associée à un compte, un e-mail de réinitialisation a été envoyé." 
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Send the password reset email with a personalized message in French
     const { error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
       redirectTo: `${req.headers.get("origin")}/reset-password`,
       captchaToken: null,
-      data: {
-        customMessage: true,
-      },
     });
 
     if (error) {
+      console.error("Password reset error:", error);
       return new Response(
-        JSON.stringify({ error: error.message }),
+        JSON.stringify({ error: "Erreur lors de l'envoi de l'e-mail de réinitialisation" }),
         {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -72,8 +99,9 @@ serve(async (req) => {
       }
     );
   } catch (error) {
+    console.error("Server error:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: "Une erreur serveur s'est produite" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
