@@ -585,6 +585,7 @@ export function HomePage() {
       <header className="bg-white py-4 shadow-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <a href="/">
+            CHAABIK
             <img src={ChaabikLogo} alt={t('logo.alt')} className="h-10 w-auto" />
           </a>
           <button
