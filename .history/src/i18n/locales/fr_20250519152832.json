@@ -1,0 +1,186 @@
+{
+  "header": {
+    "search": "Rechercher des annonces...",
+    "allCategories": "Toutes les catégories"
+  },
+  "hero": {
+    "title": "Trouvez des offres incroyables près de chez vous",
+    "subtitle": "Connectez-vous avec des vendeurs locaux et découvrez de bonnes affaires dans votre quartier"
+  },
+  "categories": {
+    "Vehicles": "Véhicules",
+    "RealEstate": "Immobilier",
+    "Electronics": "Électronique",
+    "Fashion": "Mode",
+    "Home": "Maison",
+    "Jobs": "Emplois",
+    "Services": "Services",
+    "browse": "Parcourir par catégorie",
+    "showingCategory": "Articles dans \"{{category}}\"",
+    "noCategoryItems": "Aucun article trouvé dans \"{{category}}\"",
+    "viewAll": "Voir toutes les catégories"
+  },
+  "subcategories": {
+    "Cars": "Voitures",
+    "Motorcycles": "Motos",
+    "Trucks": "Camions",
+    "Boats": "Bateaux",
+    "Parts & Accessories": "Pièces & Accessoires",
+    
+    "Apartments": "Appartements",
+    "Houses": "Maisons",
+    "Land": "Terrains",
+    "Commercial": "Commercial",
+    
+    "Phones": "Téléphones",
+    "Computers": "Ordinateurs",
+    "Gaming": "Jeux vidéo",
+    "TV & Audio": "TV & Audio",
+    
+    "Men": "Mode Homme",
+    "Women": "Mode Femme",
+    "Kids": "Mode Enfant",
+    "Accessories": "Accessoires",
+    
+    "Furniture": "Meubles",
+    "Appliances": "Électroménager",
+    "Garden": "Jardin & Extérieur",
+    "Tools": "Outils & Équipement",
+    
+    "Full Time": "Temps plein",
+    "Part Time": "Temps partiel",
+    "Freelance": "Freelance",
+    "Internship": "Stage",
+    
+    "Cleaning": "Services de nettoyage",
+    "Repair": "Services de réparation",
+    "Transport": "Services de transport",
+    "Education": "Services d'éducation"
+  },
+  "product": {
+    "condition": "État",
+    "features": "Caractéristiques",
+    "sellerInfo": "Informations sur le vendeur",
+    "contactSeller": "Contacter le vendeur",
+    "memberSince": "Membre depuis",
+    "sales": "ventes",
+    "responseRate": "Taux de réponse",
+    "new": "Nouveau",
+    "back": "Retour aux annonces",
+    "add": "Ajouter une annonce",
+    "addNew": "Ajouter une nouvelle annonce",
+    "title": "Titre",
+    "description": "Description",
+    "price": "Prix",
+    "category": "Catégorie",
+    "selectCategory": "Sélectionner une catégorie",
+    "location": "Localisation",
+    "imageUrl": "URL de l'image",
+    "images": "Images",
+    "mainImage": "Image principale",
+    "additionalImages": "Images supplémentaires",
+    "addFeature": "Ajouter une autre caractéristique",
+    "addProduct": "Ajouter l'annonce",
+    "selectCondition": "Sélectionner l'état",
+    "conditionNew": "Neuf",
+    "conditionLikeNew": "Comme neuf",
+    "conditionGood": "Bon état",
+    "conditionFair": "État moyen",
+    "conditionPoor": "État usé",
+    "myListings": "Mes annonces",
+    "noListings": "Vous n'avez pas encore publié d'annonces"
+  },
+  "auth": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "signOut": "Se déconnecter",
+    "createAccount": "Créer un compte",
+    "signInInstead": "Se connecter plutôt",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "email": "Email",
+    "password": "Mot de passe",
+    "name": "Nom complet",
+    "phone": "Numéro de téléphone",
+    "phoneFormat": "Format : +222XXXXXXXX",
+    "confirmLogout": "Confirmer la déconnexion",
+    "logoutMessage": "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour gérer vos annonces."
+  },
+  "common": {
+    "loading": "Chargement...",
+    "uploading": "Téléchargement...",
+    "backToHome": "Retour à l'accueil",
+    "cancel": "Annuler",
+    "viewAllItems": "Voir tous les articles"
+  },
+  "errors": {
+    "invalidFileType": "Type de fichier invalide. Seules les images JPEG, PNG, WebP et GIF sont autorisées.",
+    "fileTooLarge": "Fichier trop volumineux. Taille maximale : {{maxSize}}.",
+    "uploadErrors": "Erreurs de téléchargement",
+    "mainImageRequired": "L'image principale est requise",
+    "mainImageUploadFailed": "Échec du téléchargement de l'image principale",
+    "notAuthenticated": "Vous devez être connecté pour effectuer cette action",
+    "unknown": "Une erreur inattendue s'est produite",
+    "uploadFailed": "Échec du téléchargement du fichier",
+    "deleteFailed": "Échec de la suppression du fichier",
+    "networkError": "Erreur de réseau",
+    "serverError": "Erreur du serveur",
+    "profileCreationFailed": "Échec de la création du profil utilisateur. Veuillez réessayer."
+  },
+  "footer": {
+    "rights": "Tous droits réservés",
+    "categories": "Catégories",
+    "userFeatures": "Fonctionnalités utilisateur",
+    "helpInfo": "Aide & Information",
+    "postListing": "Publier une annonce",
+    "myAccount": "Mon compte",
+    "savedListings": "Annonces sauvegardées",
+    "messages": "Messages",
+    "safety": "Conseils de sécurité",
+    "rules": "Règles & Directives",
+    "contact": "Nous contacter",
+    "faq": "FAQ",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "about": "À propos"
+  },
+  "noResults": "Aucune annonce trouvée. Essayez d'ajuster vos filtres de recherche ou de catégorie.",
+  "search": {
+    "findItems": "Trouver des Articles",
+    "results": "Résultats de Recherche"
+  },
+  "home": {
+    "trustedBy": "Ils nous font confiance",
+    "whyChooseUs": "Pourquoi nous choisir",
+    "readyToStart": "Prêt à commencer ?",
+    "readyToStartDesc": "Rejoignez des milliers d'utilisateurs qui achètent et vendent sur notre plateforme chaque jour."
+  },
+  "features": {
+    "easyToUse": "Facile à utiliser",
+    "easyToUseDesc": "Interface simple et intuitive pour acheter et vendre",
+    "smartSearch": "Recherche intelligente",
+    "smartSearchDesc": "Trouvez exactement ce que vous cherchez avec notre recherche avancée",
+    "secureTrade": "Commerce sécurisé",
+    "secureTradeDesc": "Plateforme sûre et sécurisée pour toutes vos transactions"
+  },
+  "stats": {
+    "users": "Utilisateurs Actifs",
+    "items": "Articles Listés",
+    "dailyListings": "Annonces Quotidiennes",
+    "countries": "Pays"
+  },
+  "contact": {
+    "businessHours": "Heures d'ouverture",
+    "weekdays": "Lundi - Vendredi : 9h00 - 18h00",
+    "weekend": "Samedi : 10h00 - 16h00",
+    "sendMessage": "Envoyez-nous un message",
+    "name": "Votre nom",
+    "emailAddress": "Adresse e-mail",
+    "subject": "Sujet",
+    "message": "Votre message",
+    "send": "Envoyer le message"
+  },
+  "foreignPayment": "Demandes d'utiliser des méthodes de paiement inhabituelles",
+  "emergency": "En cas d'urgence, contactez immédiatement les autorités locales.",
+  "policeNumber": "Numéro de police d'urgence : 117"
+}

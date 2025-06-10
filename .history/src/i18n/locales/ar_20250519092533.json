@@ -1,0 +1,178 @@
+{
+  "header": {
+    "search": "البحث عن الإعلانات...",
+    "allCategories": "جميع الفئات"
+  },
+  "hero": {
+    "title": "اعثر على صفقات مذهلة بالقرب منك",
+    "subtitle": "تواصل مع البائعين المحليين واكتشف صفقات رائعة في حيك"
+  },
+  "categories": {
+    "Vehicles": "مركبات",
+    "RealEstate": "عقارات",
+    "Electronics": "إلكترونيات",
+    "Fashion": "أزياء",
+    "Home": "منزل",
+    "Jobs": "وظائف",
+    "Services": "خدمات"
+  },
+  "subcategories": {
+    "Cars": "سيارات",
+    "Motorcycles": "دراجات نارية",
+    "Trucks": "شاحنات",
+    "Boats": "قوارب",
+    "Parts & Accessories": "قطع غيار وإكسسوارات",
+    
+    "Apartments": "شقق",
+    "Houses": "منازل",
+    "Land": "أراضي",
+    "Commercial": "تجاري",
+    
+    "Phones": "هواتف",
+    "Computers": "حواسيب",
+    "Gaming": "ألعاب",
+    "TV & Audio": "تلفاز وصوتيات",
+    
+    "Men": "أزياء رجالية",
+    "Women": "أزياء نسائية",
+    "Kids": "أزياء أطفال",
+    "Accessories": "إكسسوارات",
+    
+    "Furniture": "أثاث",
+    "Appliances": "أجهزة منزلية",
+    "Garden": "حديقة وخارجي",
+    "Tools": "أدوات ومعدات",
+    
+    "Full Time": "دوام كامل",
+    "Part Time": "دوام جزئي",
+    "Freelance": "عمل حر",
+    "Internship": "تدريب",
+    
+    "Cleaning": "خدمات تنظيف",
+    "Repair": "خدمات صيانة",
+    "Transport": "خدمات نقل",
+    "Education": "خدمات تعليمية"
+  },
+  "product": {
+    "condition": "الحالة",
+    "features": "المميزات",
+    "sellerInfo": "معلومات البائع",
+    "contactSeller": "اتصل بالبائع",
+    "memberSince": "عضو منذ",
+    "sales": "مبيعات",
+    "responseRate": "معدل الاستجابة",
+    "new": "جديد",
+    "back": "العودة إلى القائمة",
+    "add": "إضافة إعلان",
+    "addNew": "إضافة إعلان جديد",
+    "title": "العنوان",
+    "description": "الوصف",
+    "price": "السعر",
+    "category": "الفئة",
+    "selectCategory": "اختر الفئة",
+    "location": "الموقع",
+    "imageUrl": "رابط الصورة",
+    "images": "الصور",
+    "mainImage": "الصورة الرئيسية",
+    "additionalImages": "صور إضافية",
+    "addFeature": "إضافة ميزة أخرى",
+    "addProduct": "إضافة الإعلان",
+    "selectCondition": "اختر الحالة",
+    "conditionNew": "جديد",
+    "conditionLikeNew": "كالجديد",
+    "conditionGood": "جيد",
+    "conditionFair": "مقبول",
+    "conditionPoor": "متهالك",
+    "myListings": "إعلاناتي",
+    "noListings": "لم تقم بنشر أي إعلانات بعد"
+  },
+  "auth": {
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "signOut": "تسجيل الخروج",
+    "createAccount": "إنشاء حساب جديد",
+    "signInInstead": "تسجيل الدخول بدلاً من ذلك",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "name": "الاسم الكامل",
+    "phone": "رقم الهاتف",
+    "phoneFormat": "الصيغة: +222XXXXXXXX",
+    "confirmLogout": "تأكيد تسجيل الخروج",
+    "logoutMessage": "هل أنت متأكد من رغبتك في تسجيل الخروج؟ ستحتاج إلى تسجيل الدخول مرة أخرى لإدارة إعلاناتك."
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "uploading": "جاري الرفع...",
+    "backToHome": "العودة إلى الرئيسية",
+    "cancel": "إلغاء"
+  },
+  "errors": {
+    "invalidFileType": "نوع الملف غير صالح. يُسمح فقط بصور JPEG وPNG وWebP وGIF.",
+    "fileTooLarge": "حجم الملف كبير جداً. الحد الأقصى هو {{maxSize}}.",
+    "uploadErrors": "أخطاء في الرفع",
+    "mainImageRequired": "الصورة الرئيسية مطلوبة",
+    "mainImageUploadFailed": "فشل في رفع الصورة الرئيسية",
+    "notAuthenticated": "يجب تسجيل الدخول للقيام بهذا الإجراء",
+    "unknown": "حدث خطأ غير متوقع",
+    "uploadFailed": "فشل رفع الملف",
+    "deleteFailed": "فشل حذف الملف",
+    "networkError": "حدث خطأ في الشبكة",
+    "serverError": "حدث خطأ في الخادم",
+    "profileCreationFailed": "فشل في إنشاء ملف المستخدم. يرجى المحاولة مرة أخرى."
+  },
+  "footer": {
+    "rights": "جميع الحقوق محفوظة",
+    "categories": "الفئات",
+    "userFeatures": "خدمات المستخدم",
+    "helpInfo": "المساعدة والمعلومات",
+    "postListing": "نشر إعلان",
+    "myAccount": "حسابي",
+    "savedListings": "الإعلانات المحفوظة",
+    "messages": "الرسائل",
+    "safety": "نصائح الأمان",
+    "rules": "القواعد والإرشادات",
+    "contact": "اتصل بنا",
+    "faq": "الأسئلة الشائعة",
+    "privacy": "سياسة الخصوصية",
+    "terms": "شروط الخدمة",
+    "about": "من نحن"
+  },
+  "noResults": "لم يتم العثور على إعلانات. حاول تعديل فلاتر البحث أو الفئات.",
+  "search": {
+    "findItems": "البحث عن المنتجات",
+    "results": "نتائج البحث"
+  },
+  "home": {
+    "trustedBy": "يثق بنا",
+    "whyChooseUs": "لماذا تختارنا",
+    "readyToStart": "هل أنت مستعد للبدء؟",
+    "readyToStartDesc": "انضم إلى آلاف المستخدمين الذين يشترون ويبيعون على منصتنا كل يوم."
+  },
+  "features": {
+    "easyToUse": "سهل الاستخدام",
+    "easyToUseDesc": "واجهة بسيطة وبديهية للشراء والبيع",
+    "smartSearch": "بحث ذكي",
+    "smartSearchDesc": "ابحث عن ما تريد بالضبط مع بحثنا المتقدم",
+    "secureTrade": "تداول آمن",
+    "secureTradeDesc": "منصة آمنة ومضمونة لجميع معاملاتك"
+  },
+  "stats": {
+    "users": "المستخدمين النشطين",
+    "items": "المنتجات المعروضة",
+    "dailyListings": "الإعلانات اليومية",
+    "countries": "الدول"
+  },
+  "contact": {
+    "businessHours": "ساعات العمل",
+    "weekdays": "الاثنين - الجمعة: 9:00 صباحاً - 6:00 مساءً",
+    "weekend": "السبت: 10:00 صباحاً - 4:00 مساءً",
+    "sendMessage": "أرسل لنا رسالة",
+    "name": "اسمك",
+    "emailAddress": "البريد الإلكتروني",
+    "subject": "الموضوع",
+    "message": "رسالتك",
+    "send": "إرسال الرسالة"
+  }
+}

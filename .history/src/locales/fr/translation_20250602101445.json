@@ -1,0 +1,13 @@
+{
+  "common": {
+    "viewDetails": "Voir les détails"
+  },
+  "product": {
+    "sold": "VENDU",
+    "soldOut": "Épuisé",
+    "conditionNew": "Neuf",
+    "conditionUsedLikeNew": "Occasion - Comme neuf",
+    "conditionUsedGood": "Occasion - Bon état",
+    "conditionUsedFair": "Occasion - État correct"
+  }
+} 

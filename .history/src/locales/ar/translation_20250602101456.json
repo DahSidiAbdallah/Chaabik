@@ -1,0 +1,13 @@
+{
+  "common": {
+    "viewDetails": "عرض التفاصيل"
+  },
+  "product": {
+    "sold": "مباع",
+    "soldOut": "نفذت الكمية",
+    "conditionNew": "جديد",
+    "conditionUsedLikeNew": "مستعمل - كالجديد",
+    "conditionUsedGood": "مستعمل - حالة جيدة",
+    "conditionUsedFair": "مستعمل - حالة مقبولة"
+  }
+} 

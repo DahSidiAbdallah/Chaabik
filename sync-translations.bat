@@ -1,0 +1,6 @@
+@echo off
+echo Running translation synchronization...
+node scripts/sync-translations.js
+echo.
+echo Press any key to exit...
+pause > nul 
