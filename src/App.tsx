@@ -11,6 +11,8 @@ import { Rules } from './components/Rules';
 import { Terms } from './components/Terms';
 import { Privacy } from './components/Privacy';
 import { UserProfile } from './components/UserProfile';
+import { ForgotPassword } from './components/ForgotPassword';
+import { ResetPassword } from './components/ResetPassword';
 
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </div>
     </BrowserRouter>

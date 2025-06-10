@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag, Calendar, Tag, MapPin } from 'lucide-react';
+import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag } from 'lucide-react';
 import { getImageUrl } from '../lib/supabase';
 import { Footer } from './Footer';
-import { formatTimeAgo } from '../lib/utils';
 
 export function UserProfile() {
   const { t } = useTranslation();
@@ -162,7 +161,7 @@ export function UserProfile() {
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow bg-gray-50 py-8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
             <button
               onClick={() => navigate('/')}
               className="flex items-center text-gray-600 hover:text-gray-900"
@@ -182,27 +181,27 @@ export function UserProfile() {
 
           <div className="bg-white shadow rounded-lg overflow-hidden">
             {/* Profile Header */}
-            <div className="px-6 py-8 border-b border-gray-200 bg-gray-50">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+            <div className="px-4 sm:px-6 py-6 sm:py-8 border-b border-gray-200 bg-gray-50">
+              <div className="flex flex-wrap items-center gap-5">
                 <div className="flex-shrink-0">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-2xl font-bold">
+                  <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-xl sm:text-2xl font-bold">
                     {profile?.name?.charAt(0) || user?.email?.charAt(0) || '?'}
                   </div>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
-                  <p className="text-sm text-gray-500">
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
+                  <p className="text-xs sm:text-sm text-gray-500">
                     {t('product.memberSince')} {new Date(profile?.created_at || user?.created_at).toLocaleDateString()}
                   </p>
-                  <p className="text-sm text-gray-500 mt-1">{user?.email}</p>
-                  <p className="text-sm text-gray-500">{profile?.phone}</p>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">{user?.email}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">{profile?.phone}</p>
                 </div>
               </div>
             </div>
 
             {/* Listings */}
             <div className="p-4 sm:p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">{t('product.myListings')}</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-6">{t('product.myListings')}</h2>
               
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
@@ -211,10 +210,10 @@ export function UserProfile() {
               )}
               
               {userListings.length === 0 ? (
-                <div className="text-center py-16 px-4">
-                  <ShoppingBag className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">{t('product.noListings')}</h3>
-                  <p className="text-gray-500 mb-6">{t('product.readyToSell')}</p>
+                <div className="text-center py-12 sm:py-16 px-4">
+                  <ShoppingBag className="w-10 sm:w-12 h-10 sm:h-12 mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">{t('product.noListings')}</h3>
+                  <p className="text-sm sm:text-base text-gray-500 mb-6">{t('product.readyToSell')}</p>
                   <Link 
                     to="/add-product" 
                     className="px-4 py-2 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 transition-colors"
@@ -223,183 +222,97 @@ export function UserProfile() {
                   </Link>
                 </div>
               ) : (
-                <>
-                  {/* Desktop Table - Hidden on small screens */}
-                  <div className="hidden md:block overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-                    <table className="min-w-full divide-y divide-gray-300">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                            {t('product.title')}
-                          </th>
-                          <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                            {t('product.price')}
-                          </th>
-                          <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                            {t('product.status')}
-                          </th>
-                          <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                            {t('product.dateAdded')}
-                          </th>
-                          <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                            <span className="sr-only">{t('product.actions')}</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200 bg-white">
-                        {userListings.map((listing) => (
-                          <tr key={listing.id} className={listing.is_sold ? "bg-gray-50" : ""}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                              <div className="flex items-center">
-                                <div className="h-10 w-10 flex-shrink-0">
-                                  <img 
-                                    className="h-10 w-10 rounded-md object-cover" 
-                                    src={listing.image_url ? getImageUrl(listing.image_url) : '/placeholder-image.jpg'} 
-                                    alt="" 
-                                  />
-                                </div>
-                                <div className="ml-4">
-                                  <div className="font-medium text-gray-900 line-clamp-1">{listing.title}</div>
-                                  <div className="text-gray-500">{listing.category}</div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              <div className="text-gray-900 font-medium">{listing.price.toLocaleString()} MRU</div>
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                                listing.is_sold 
-                                  ? "bg-green-100 text-green-800" 
-                                  : "bg-yellow-100 text-yellow-800"
-                              }`}>
-                                {listing.is_sold ? t('product.sold') : t('product.available')}
-                              </span>
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {new Date(listing.created_at).toLocaleDateString()}
-                            </td>
-                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                              <div className="flex justify-end space-x-2">
-                                <button
-                                  onClick={() => handleToggleSoldStatus(listing.id, !!listing.is_sold)}
-                                  className={`p-1 rounded-full ${listing.is_sold ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}
-                                  title={listing.is_sold ? t('product.markAsAvailable') : t('product.markAsSold')}
-                                >
-                                  {listing.is_sold ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
-                                </button>
-                                <Link
-                                  to={`/product/${listing.id}`}
-                                  className="p-1 rounded-full bg-blue-100 text-blue-700"
-                                  title={t('product.view')}
-                                >
-                                  <Eye className="w-4 h-4" />
-                                </Link>
-                                <button
-                                  onClick={() => {
-                                    setListingToDelete(listing.id);
-                                    setDeleteModalOpen(true);
-                                  }}
-                                  className="p-1 rounded-full bg-red-100 text-red-700"
-                                  title={t('product.delete')}
-                                >
-                                  <Trash className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </td>
+                <div className="overflow-x-auto -mx-4 sm:-mx-6">
+                  <div className="inline-block min-w-full align-middle">
+                    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                      <table className="min-w-full divide-y divide-gray-300">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-xs sm:text-sm font-semibold text-gray-900 sm:pl-6">
+                              {t('product.title')}
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-xs sm:text-sm font-semibold text-gray-900 hidden sm:table-cell">
+                              {t('product.price')}
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-xs sm:text-sm font-semibold text-gray-900">
+                              {t('product.status')}
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-xs sm:text-sm font-semibold text-gray-900 hidden md:table-cell">
+                              {t('product.dateAdded')}
+                            </th>
+                            <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                              <span className="sr-only">{t('product.actions')}</span>
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 bg-white">
+                          {userListings.map((listing) => (
+                            <tr key={listing.id} className={listing.is_sold ? "bg-gray-50" : ""}>
+                              <td className="whitespace-nowrap py-4 pl-4 pr-3 text-xs sm:text-sm sm:pl-6">
+                                <div className="flex items-center">
+                                  <div className="h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0">
+                                    <img 
+                                      className="h-8 w-8 sm:h-10 sm:w-10 rounded-md object-cover" 
+                                      src={listing.image_url ? getImageUrl(listing.image_url) : '/placeholder-image.jpg'} 
+                                      alt="" 
+                                    />
+                                  </div>
+                                  <div className="ml-2 sm:ml-4">
+                                    <div className="font-medium text-gray-900 line-clamp-1 max-w-[120px] sm:max-w-none">{listing.title}</div>
+                                    <div className="text-gray-500 text-xs hidden sm:block">{listing.category}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-xs sm:text-sm text-gray-500 hidden sm:table-cell">
+                                <div className="text-gray-900 font-medium">{listing.price.toLocaleString()} MRU</div>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-xs sm:text-sm text-gray-500">
+                                <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                                  listing.is_sold 
+                                    ? "bg-green-100 text-green-800" 
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}>
+                                  {listing.is_sold ? t('product.sold') : t('product.available')}
+                                </span>
+                              </td>
+                              <td className="whitespace-nowrap px-3 py-4 text-xs sm:text-sm text-gray-500 hidden md:table-cell">
+                                {new Date(listing.created_at).toLocaleDateString()}
+                              </td>
+                              <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-xs sm:text-sm font-medium sm:pr-6">
+                                <div className="flex justify-end space-x-2">
+                                  <button
+                                    onClick={() => handleToggleSoldStatus(listing.id, !!listing.is_sold)}
+                                    className={`p-1 rounded-full ${listing.is_sold ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700"}`}
+                                    title={listing.is_sold ? t('product.markAsAvailable') : t('product.markAsSold')}
+                                  >
+                                    {listing.is_sold ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                                  </button>
+                                  <Link
+                                    to={`/product/${listing.id}`}
+                                    className="p-1 rounded-full bg-blue-100 text-blue-700"
+                                    title={t('product.view')}
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </Link>
+                                  <button
+                                    onClick={() => {
+                                      setListingToDelete(listing.id);
+                                      setDeleteModalOpen(true);
+                                    }}
+                                    className="p-1 rounded-full bg-red-100 text-red-700"
+                                    title={t('product.delete')}
+                                  >
+                                    <Trash className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-
-                  {/* Mobile Card View - Shown only on small screens */}
-                  <div className="md:hidden space-y-4">
-                    {userListings.map((listing) => (
-                      <div 
-                        key={listing.id} 
-                        className={`bg-white rounded-lg shadow border overflow-hidden ${
-                          listing.is_sold ? "border-gray-200" : "border-gray-200"
-                        }`}
-                      >
-                        <div className="flex items-center p-4 border-b border-gray-100">
-                          <div className="h-14 w-14 flex-shrink-0 mr-3">
-                            <img 
-                              className="h-full w-full rounded-md object-cover" 
-                              src={listing.image_url ? getImageUrl(listing.image_url) : '/placeholder-image.jpg'} 
-                              alt="" 
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-gray-900 truncate">{listing.title}</div>
-                            <div className="flex items-center text-sm text-gray-500 mt-1">
-                              <Tag className="w-3.5 h-3.5 mr-1" />
-                              <span className="font-medium">{listing.price.toLocaleString()} MRU</span>
-                            </div>
-                          </div>
-                          <div className="ml-2">
-                            <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                              listing.is_sold 
-                                ? "bg-green-100 text-green-800" 
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}>
-                              {listing.is_sold ? t('product.sold') : t('product.available')}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="px-4 py-3 text-sm text-gray-500 flex flex-wrap items-center gap-x-4 gap-y-2">
-                          <div className="flex items-center">
-                            <MapPin className="w-3.5 h-3.5 mr-1 text-gray-400" />
-                            <span>{listing.location}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <Calendar className="w-3.5 h-3.5 mr-1 text-gray-400" />
-                            <span>{formatTimeAgo(listing.created_at)}</span>
-                          </div>
-                        </div>
-                        
-                        <div className="border-t border-gray-100 grid grid-cols-3 divide-x divide-gray-100">
-                          <button
-                            onClick={() => handleToggleSoldStatus(listing.id, !!listing.is_sold)}
-                            className="py-2.5 flex items-center justify-center text-sm font-medium text-gray-700 hover:bg-gray-50"
-                          >
-                            {listing.is_sold ? (
-                              <>
-                                <X className="w-4 h-4 mr-1.5 text-yellow-500" />
-                                <span>Unsold</span>
-                              </>
-                            ) : (
-                              <>
-                                <Check className="w-4 h-4 mr-1.5 text-green-500" />
-                                <span>Sold</span>
-                              </>
-                            )}
-                          </button>
-                          
-                          <Link
-                            to={`/product/${listing.id}`}
-                            className="py-2.5 flex items-center justify-center text-sm font-medium text-blue-600 hover:bg-blue-50"
-                          >
-                            <Eye className="w-4 h-4 mr-1.5" />
-                            <span>{t('product.view')}</span>
-                          </Link>
-                          
-                          <button
-                            onClick={() => {
-                              setListingToDelete(listing.id);
-                              setDeleteModalOpen(true);
-                            }}
-                            className="py-2.5 flex items-center justify-center text-sm font-medium text-red-600 hover:bg-red-50"
-                          >
-                            <Trash className="w-4 h-4 mr-1.5" />
-                            <span>{t('product.delete')}</span>
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                </div>
               )}
             </div>
           </div>
@@ -410,26 +323,26 @@ export function UserProfile() {
 
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
             <div className="flex items-center gap-3 text-red-600 mb-4">
               <Trash className="w-6 h-6" />
               <h3 className="text-lg font-semibold">{t('confirmation.confirmDelete')}</h3>
             </div>
             <p className="text-gray-600 mb-6">{t('confirmation.deleteConfirmMessage')}</p>
-            <div className="flex flex-col sm:flex-row justify-end gap-3">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => {
                   setDeleteModalOpen(false);
                   setListingToDelete(null);
                 }}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors order-2 sm:order-1"
+                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
               >
                 {t('common.cancel')}
               </button>
               <button
                 onClick={handleDeleteListing}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors order-1 sm:order-2"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
                 {t('product.delete')}
               </button>
