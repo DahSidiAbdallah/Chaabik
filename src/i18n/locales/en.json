@@ -147,7 +147,15 @@
     "passwordSpecial": "At least 1 special character",
     "phoneFormatMauritania": "Enter 8 digits starting with 2, 3, or 4",
     "errorFetchingUser": "Error fetching user data: {{message}}",
-    "errorInAuthCheck": "Error during authentication check: {{error}}"
+    "errorInAuthCheck": "Error during authentication check: {{error}}",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "sendResetLink": "Send Reset Link",
+    "checkYourEmail": "Check your email",
+    "resetInstructions": "We've sent you an email with instructions to reset your password. Please check your inbox.",
+    "backToSignIn": "Back to Sign In",
+    "rememberPassword": "Remember your password?",
+    "resetEmailSent": "Password reset email sent. Please check your inbox."
   },
   "common": {
     "loading": "Loading...",
@@ -180,7 +188,9 @@
     "phoneExists": "This phone number is already registered. Please use a different number.",
     "passwordRequirements": "Password doesn't meet all requirements",
     "databaseError": "Error connecting to database. Please try again later.",
-    "uploadProblems": "There were problems with your uploads"
+    "uploadProblems": "There were problems with your uploads",
+    "invalidEmail": "Please enter a valid email address",
+    "resetFailed": "Failed to send password reset email. Please try again."
   },
   "footer": {
     "rights": "All rights reserved",
