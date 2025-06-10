@@ -290,7 +290,7 @@ export function Auth() {
               {mode === 'signup' && (
                 <>
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="name\" className="block text-sm font-medium text-gray-700">
                       {t('auth.name')}
                     </label>
                     <input
