@@ -179,7 +179,8 @@
     "viewDetails": "Voir les détails",
     "notProvided": "Non fourni",
     "update": "Mettre à jour",
-    "save": "Enregistrer les modifications"
+    "save": "Enregistrer les modifications",
+    "goBack": "Retour"
   },
   "errors": {
     "invalidFileType": "Type de fichier invalide. Seules les images JPEG, PNG, WebP et GIF sont autorisées.",
@@ -202,7 +203,9 @@
     "uploadProblems": "Il y a eu des problèmes avec vos téléchargements",
     "deleteListingFailed": "Échec de la suppression de l'annonce",
     "updateStatusFailed": "Échec de la mise à jour du statut",
-    "updateListingFailed": "Échec de la mise à jour de l'annonce"
+    "updateListingFailed": "Échec de la mise à jour de l'annonce",
+    "sellerNotFound": "Vendeur non trouvé",
+    "listingsNotFound": "Impossible de charger les annonces du vendeur"
   },
   "footer": {
     "rights": "Tous droits réservés",
@@ -415,5 +418,14 @@
   "faq": {
     "deleteAccount": "Comment supprimer mon compte?",
     "deleteAccountAnswer": "Pour supprimer votre compte, veuillez contacter notre service client via la page de contact avec votre demande de suppression."
+  },
+  "sellerProfile": {
+    "title": "Profil du vendeur",
+    "listings": "Annonces du vendeur",
+    "noListings": "Aucune annonce trouvée",
+    "noListingsMessage": "Ce vendeur n'a pas encore publié d'annonces.",
+    "viewAllListings": "Voir toutes les annonces",
+    "contactInfo": "Informations de contact",
+    "about": "À propos du vendeur"
   }
 }
