@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Mail, CheckCircle, AlertTriangle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export function ForgotPassword() {
   const { t } = useTranslation();
@@ -16,25 +17,13 @@ export function ForgotPassword() {
     setError(null);
 
     try {
-      // Use the Edge Function for password reset
-      const apiUrl = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/password-reset`;
-      
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ 
-          email,
-          redirectTo: `${window.location.origin}/reset-password`
-        })
+      // Use Supabase's built-in resetPasswordForEmail function instead of the Edge Function
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`
       });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Une erreur est survenue lors de l\'envoi de l\'email de réinitialisation');
+      if (error) {
+        throw error;
       }
       
       setSuccess(true);
@@ -94,7 +83,7 @@ export function ForgotPassword() {
                 <div className="rounded-md bg-red-50 p-4 mb-6">
                   <div className="flex">
                     <div className="flex-shrink-0">
-                      <AlertTriangle className="h-5 w-5 text-red-400\" aria-hidden="true" />
+                      <AlertTriangle className="h-5 w-5 text-red-400" aria-hidden="true" />
                     </div>
                     <div className="ml-3">
                       <h3 className="text-sm font-medium text-red-800">{error}</h3>
