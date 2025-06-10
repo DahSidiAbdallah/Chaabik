@@ -13,6 +13,7 @@ import { Privacy } from './components/Privacy';
 import { UserProfile } from './components/UserProfile';
 import { ForgotPassword } from './components/ForgotPassword';
 import { ResetPassword } from './components/ResetPassword';
+import { EditListing } from './components/EditListing';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/add-product" element={<AddProduct />} />
+          <Route path="/edit-product/:id" element={<EditListing />} />
           <Route path="/safety" element={<SafetyTips />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />

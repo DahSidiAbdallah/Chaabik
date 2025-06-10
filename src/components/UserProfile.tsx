@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag, Pencil } from 'lucide-react';
 import { getImageUrl } from '../lib/supabase';
 import { Footer } from './Footer';
 
@@ -92,7 +92,7 @@ export function UserProfile() {
       setListingToDelete(null);
     } catch (err) {
       console.error('Delete error:', err);
-      setError('An unexpected error occurred');
+      setError(t('errors.unknown'));
     }
   };
 
@@ -293,6 +293,13 @@ export function UserProfile() {
                                     title={t('product.view')}
                                   >
                                     <Eye className="w-4 h-4" />
+                                  </Link>
+                                  <Link
+                                    to={`/edit-product/${listing.id}`}
+                                    className="p-1 rounded-full bg-yellow-100 text-yellow-700"
+                                    title={t('product.edit')}
+                                  >
+                                    <Pencil className="w-4 h-4" />
                                   </Link>
                                   <button
                                     onClick={() => {

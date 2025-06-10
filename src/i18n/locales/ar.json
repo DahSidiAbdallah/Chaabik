@@ -123,7 +123,9 @@
     "deleteListing": "حذف الإعلان",
     "editListing": "تعديل الإعلان",
     "viewListing": "عرض الإعلان",
-    "addedOn": "أضيف في"
+    "addedOn": "أضيف في",
+    "updateListing": "تحديث الإعلان",
+    "updateSuccess": "تم تحديث الإعلان بنجاح"
   },
   "auth": {
     "signIn": "تسجيل الدخول",
@@ -187,7 +189,9 @@
     "clearFilters": "مسح الفلاتر",
     "noResults": "لا توجد نتائج",
     "tryAgain": "حاول مرة أخرى",
-    "goBack": "العودة"
+    "goBack": "العودة",
+    "viewDetails": "عرض التفاصيل",
+    "notProvided": "غير متوفر"
   },
   "errors": {
     "invalidFileType": "نوع الملف غير صالح. يُسمح فقط بصور JPEG وPNG وWebP وGIF.",
@@ -209,7 +213,8 @@
     "databaseError": "خطأ في الاتصال بقاعدة البيانات. يرجى المحاولة مرة أخرى لاحقًا.",
     "deleteListingFailed": "فشل حذف الإعلان",
     "updateStatusFailed": "فشل تحديث الحالة",
-    "uploadProblems": "كانت هناك مشاكل مع عمليات الرفع الخاصة بك"
+    "uploadProblems": "كانت هناك مشاكل مع عمليات الرفع الخاصة بك",
+    "updateListingFailed": "فشل تحديث الإعلان"
   },
   "footer": {
     "rights": "جميع الحقوق محفوظة",

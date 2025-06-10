@@ -121,7 +121,10 @@
     "view": "Voir",
     "edit": "Modifier",
     "delete": "Supprimer",
-    "readyToSell": "Prêt à vendre quelque chose? Créez votre première annonce maintenant."
+    "readyToSell": "Prêt à vendre quelque chose? Créez votre première annonce maintenant.",
+    "editListing": "Modifier l'annonce",
+    "updateListing": "Mettre à jour l'annonce",
+    "updateSuccess": "Annonce mise à jour avec succès"
   },
   "auth": {
     "signIn": "Se connecter",
@@ -172,7 +175,11 @@
     "showFilters": "Afficher les filtres",
     "hideFilters": "Masquer les filtres",
     "loadingCategory": "Chargement de la catégorie...",
-    "items": "articles"
+    "items": "articles",
+    "viewDetails": "Voir les détails",
+    "notProvided": "Non fourni",
+    "update": "Mettre à jour",
+    "save": "Enregistrer les modifications"
   },
   "errors": {
     "invalidFileType": "Type de fichier invalide. Seules les images JPEG, PNG, WebP et GIF sont autorisées.",
@@ -194,7 +201,8 @@
     "databaseError": "Erreur de connexion à la base de données. Veuillez réessayer plus tard.",
     "uploadProblems": "Il y a eu des problèmes avec vos téléchargements",
     "deleteListingFailed": "Échec de la suppression de l'annonce",
-    "updateStatusFailed": "Échec de la mise à jour du statut"
+    "updateStatusFailed": "Échec de la mise à jour du statut",
+    "updateListingFailed": "Échec de la mise à jour de l'annonce"
   },
   "footer": {
     "rights": "Tous droits réservés",

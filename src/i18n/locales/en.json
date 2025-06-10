@@ -130,7 +130,10 @@
     "view": "View",
     "edit": "Edit",
     "delete": "Delete",
-    "readyToSell": "Ready to sell something? Create your first listing now."
+    "readyToSell": "Ready to sell something? Create your first listing now.",
+    "editListing": "Edit Listing",
+    "updateListing": "Update Listing",
+    "updateSuccess": "Listing updated successfully"
   },
   "auth": {
     "signIn": "Sign In",
@@ -183,7 +186,9 @@
     "loadingCategory": "Loading category...",
     "items": "items",
     "viewDetails": "View Details",
-    "notProvided": "Not provided"
+    "notProvided": "Not provided",
+    "update": "Update",
+    "save": "Save Changes"
   },
   "errors": {
     "invalidFileType": "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.",
@@ -205,7 +210,8 @@
     "databaseError": "Error connecting to database. Please try again later.",
     "uploadProblems": "There were problems with your uploads",
     "deleteListingFailed": "Failed to delete listing",
-    "updateStatusFailed": "Failed to update status"
+    "updateStatusFailed": "Failed to update status",
+    "updateListingFailed": "Failed to update listing"
   },
   "footer": {
     "rights": "All rights reserved",
