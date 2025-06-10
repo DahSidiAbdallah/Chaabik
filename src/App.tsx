@@ -11,21 +11,19 @@ import { Rules } from './components/Rules';
 import { Terms } from './components/Terms';
 import { Privacy } from './components/Privacy';
 import { UserProfile } from './components/UserProfile';
-import { ForgotPassword } from './components/ForgotPassword';
-import { ResetPassword } from './components/ResetPassword';
-import { EditListing } from './components/EditListing';
 import { SellerProfile } from './components/SellerProfile';
+
 
 function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen font-sans bg-white" dir={document.dir}>
         <Routes>
+          
           <Route path="/" element={<HomePage />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/add-product" element={<AddProduct />} />
-          <Route path="/edit-product/:id" element={<EditListing />} />
           <Route path="/safety" element={<SafetyTips />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/contact" element={<Contact />} />
@@ -33,8 +31,6 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/profile" element={<UserProfile />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/seller/:id" element={<SellerProfile />} />
         </Routes>
       </div>
