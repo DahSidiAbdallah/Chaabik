@@ -71,12 +71,14 @@ export function ListingCard({
 
   return (
     <Link to={`/product/${id}`} className="block group h-full">
-      <div className="bg-white rounded-lg overflow-hidden transition-all duration-300 hover:shadow-md h-full border border-gray-100 flex flex-col">
+      <div
+        className="bg-white rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-xl hover:scale-[1.025] h-full flex flex-col border border-transparent hover:border-yellow-200"
+      >
         <div className="relative">
           <img
             src={imageUrl}
             alt={title}
-            className={`h-36 xs:h-40 sm:h-48 w-full object-cover object-center group-hover:opacity-90 transition-opacity ${is_sold ? 'opacity-70' : ''}`}
+            className={`h-36 xs:h-40 sm:h-48 w-full object-cover object-center group-hover:opacity-90 transition-opacity rounded-t-2xl ${is_sold ? 'opacity-70' : ''}`}
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               if (target.src !== '/placeholder-image.jpg') {
@@ -84,7 +86,6 @@ export function ListingCard({
               }
             }}
           />
-          
           {/* Sold indicator */}
           {is_sold && (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -93,10 +94,9 @@ export function ListingCard({
               </div>
             </div>
           )}
-          
           {/* Price tag */}
           <div className="absolute top-2 right-2">
-            <div className={`${is_sold ? 'bg-gray-200 text-gray-700' : 'bg-yellow-400 text-black'} px-2 xs:px-3 py-1 rounded-full text-xs xs:text-sm font-medium shadow-md`}>
+            <div className={`${is_sold ? 'bg-gray-200 text-gray-700' : 'bg-yellow-400 text-black'} px-2 xs:px-3 py-1 rounded-full text-xs xs:text-sm font-medium shadow-md`}> 
               {is_sold ? (
                 <span>{t('product.soldOut')}</span>
               ) : (
@@ -105,46 +105,34 @@ export function ListingCard({
             </div>
           </div>
         </div>
-        
-        <div className="p-2 xs:p-3 sm:p-4 flex-grow flex flex-col">
-          <h3 className="text-sm xs:text-base sm:text-lg font-medium text-gray-900 line-clamp-1 mb-1 xs:mb-2">
+        <div className="p-3 sm:p-4 flex-grow flex flex-col">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 line-clamp-1 mb-1 xs:mb-2">
             {title}
           </h3>
-          
           <div className="flex flex-wrap items-center gap-y-1 mb-1 xs:mb-2">
-            {/* Make seller name a link to their profile */}
             {seller.id ? (
               <Link 
                 to={`/seller/${seller.id}`}
                 className="flex items-center mr-3 w-full xs:w-auto hover:text-blue-600"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gray-200 mr-1 overflow-hidden flex-shrink-0">
-                  {/* Placeholder for seller avatar */}
-                  <div className="w-full h-full bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
-                </div>
+                <div className="w-5 h-5 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 mr-1 overflow-hidden flex-shrink-0"></div>
                 <span className="text-xs text-gray-600 truncate max-w-[120px]">{seller.name}</span>
               </Link>
             ) : (
               <div className="flex items-center mr-3 w-full xs:w-auto">
-                <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gray-200 mr-1 overflow-hidden flex-shrink-0">
-                  {/* Placeholder for seller avatar */}
-                  <div className="w-full h-full bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
-                </div>
+                <div className="w-5 h-5 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 mr-1 overflow-hidden flex-shrink-0"></div>
                 <span className="text-xs text-gray-600 truncate max-w-[120px]">{seller.name}</span>
               </div>
             )}
-            
             <div className="flex items-center text-xs text-gray-500">
               <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
               <span className="truncate max-w-[120px]">{location}</span>
             </div>
           </div>
-          
           <p className="text-xs text-gray-600 line-clamp-2 mb-3 min-h-[2rem] flex-grow">
             {description}
           </p>
-          
           <div className="flex items-center justify-between text-xs text-gray-500 border-t pt-2 mt-auto border-gray-100">
             <div className="flex items-center">
               <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${conditionClassName}`}>
@@ -152,9 +140,8 @@ export function ListingCard({
                 {t(`product.condition${condition.replace(/\s/g, '')}`)}
               </span>
             </div>
-            {/* Display formatted time ago */}
             {timeAgo && (
-              <span className="text-xs text-gray-500">{timeAgo}</span>
+              <span className="text-xs text-gray-400">{timeAgo}</span>
             )}
             <span className="hidden group-hover:inline-block text-blue-600 font-medium whitespace-nowrap">
               {t('common.viewDetails')} →
