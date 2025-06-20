@@ -4,6 +4,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { supabase, isAuthenticated } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -15,6 +16,7 @@ export function NavBar() {
   const [authChecked, setAuthChecked] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkUser = async () => {
@@ -52,11 +54,14 @@ export function NavBar() {
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategory(categoryId);
+    navigate(`/?category=${categoryId}`);
   };
 
   const handleAllCategories = () => {
     setSelectedCategory(null);
+    navigate(`/`);
   };
+
 
   if (!authChecked) {
     return null;
