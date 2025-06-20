@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, getImageUrl } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { User, LogOut, Package, AlertTriangle, Plus, Settings } from 'lucide-react';
 import { AvatarUpload } from './AvatarUpload';
@@ -69,6 +69,17 @@ export function UserMenu() {
         
         if (user) {
           setCurrentUser(user);
+          // Fetch avatar_url from seller_profiles
+          const { data: profile, error: profileError } = await supabase
+            .from('seller_profiles')
+            .select('avatar_url')
+            .eq('id', user.id)
+            .single();
+          if (!profileError && profile?.avatar_url) {
+            setAvatarUrl(profile.avatar_url);
+          } else {
+            setAvatarUrl(undefined);
+          }
           const { data, error } = await supabase
             .from('products')
             .select('*')
@@ -118,9 +129,9 @@ export function UserMenu() {
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
         >
-          {currentUser?.user_metadata?.avatar_url ? (
+          {avatarUrl ? (
             <img
-              src={currentUser.user_metadata.avatar_url}
+              src={getImageUrl(avatarUrl)}
               alt="Avatar"
               className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400"
             />
@@ -140,9 +151,17 @@ export function UserMenu() {
                 className="flex items-center gap-3"
                 onClick={() => setIsOpen(false)}
               >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
-                  <User className="w-5 h-5" />
-                </div>
+                {avatarUrl ? (
+                  <img
+                    src={getImageUrl(avatarUrl)}
+                    alt="Avatar"
+                    className="w-10 h-10 rounded-full object-cover border-2 border-yellow-400"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
+                    {currentUser?.user_metadata?.name?.charAt(0) || currentUser?.user_metadata?.email?.charAt(0) || <User className="w-5 h-5" />}
+                  </div>
+                )}
                 <div>
                   <div className="font-medium text-gray-900">{currentUser?.user_metadata?.name || currentUser?.user_metadata?.email || t('auth.myAccount')}</div>
                   <div className="text-xs text-gray-500">View and edit your profile</div>

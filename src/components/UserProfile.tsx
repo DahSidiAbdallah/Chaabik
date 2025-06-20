@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag, Pencil } from 'lucide-react';
 import { getImageUrl } from '../lib/supabase';
+import { AvatarUpload } from './AvatarUpload';
 import { Footer } from './Footer';
 
 export function UserProfile() {
@@ -305,9 +306,26 @@ export function UserProfile() {
             <div className="px-4 py-6 sm:px-6 sm:py-8 border-b border-gray-200 bg-gray-50">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
                 <div className="flex-shrink-0 flex justify-center">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-2xl font-bold">
-                    {profile?.name?.charAt(0) || user?.email?.charAt(0) || '?'}
-                  </div>
+                  <AvatarUpload
+                    userId={user?.id}
+                    avatarUrl={profile?.avatar_url}
+                    onUpload={async (filePath) => {
+                      // Update avatar_url in seller_profiles
+                      const { error } = await supabase
+                        .from('seller_profiles')
+                        .update({ avatar_url: filePath })
+                        .eq('id', user.id);
+                      if (!error) {
+                        // Refetch profile after upload
+                        const { data: updatedProfile } = await supabase
+                          .from('seller_profiles')
+                          .select('*')
+                          .eq('id', user.id)
+                          .single();
+                        setProfile(updatedProfile);
+                      }
+                    }}
+                  />
                 </div>
                 <div className="text-center sm:text-left">
                   <h1 className="text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
