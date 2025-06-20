@@ -1,20 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-/* Base styles */
 html {
   scroll-behavior: smooth;
+  background: #fafbfc;
 }
 
 body {
   font-family: 'Inter', sans-serif;
+  color: #222;
+  background: #fafbfc;
+  min-height: 100vh;
 }
 
-/* Transitions */
+input, textarea, select {
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  transition: border 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #ffd600;
+  box-shadow: 0 0 0 2px #fffbe6;
+}
+
+button {
+  font-family: inherit;
+  border-radius: 9999px;
+  transition: background 0.2s, color 0.2s;
+}
+
 .transition {
   transition: all 0.2s ease-in-out;
 }
