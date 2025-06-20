@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { ArrowLeft, Eye, EyeOff, Check, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -248,7 +248,7 @@ export function Auth() {
             {mode === 'signup' && (
               <>
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="name\" className="block text-sm font-medium text-gray-700">
                     {t('auth.name')}
                   </label>
                   <input
@@ -372,6 +372,18 @@ export function Auth() {
                 <p className="mt-1 text-sm text-red-600">
                   {validationErrors.password}
                 </p>
+              )}
+              
+              {/* Forgot password link */}
+              {mode === 'signin' && (
+                <div className="text-right mt-1">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    {t('auth.forgotPassword')}
+                  </Link>
+                </div>
               )}
             </div>
 

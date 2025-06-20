@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MapPin, Star, Phone, Clock, Package, BadgeCheck, ArrowLeft, ShoppingBag } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -107,6 +107,7 @@ export function ProductDetails() {
             seller_id: data.seller_id, // Store seller ID to check if current user is the seller
             createdAt: data.created_at, // Add createdAt for the product itself
             seller: {
+              id: data.seller?.id, // Add seller ID for linking to seller profile
               name: data.seller?.name || 'Anonymous',
               rating: data.seller?.rating || 4.5, // This will be removed from display
               phone: sellerPhone,
@@ -175,11 +176,31 @@ export function ProductDetails() {
         return;
       }
       
-      // Update local state
-      setProduct({
-        ...product,
-        is_sold: !product.is_sold
-      });
+      setProduct(prev =>
+        prev ? { ...prev, is_sold: !prev.is_sold } : prev
+      );
+
+      const newSoldCount = product.is_sold
+        ? Math.max((product.seller.totalSales || 0) - 1, 0)
+        : (product.seller.totalSales || 0) + 1;
+      
+      const { error: profileError } = await supabase
+        .from('seller_profiles')
+        .update({ total_sales: newSoldCount })
+        .eq('id', product.seller_id);
+        
+      if (profileError) {
+        console.error('Error updating total_sales:', profileError);
+      } else {
+        setProduct(prev =>
+          prev
+            ? {
+                ...prev,
+                seller: { ...prev.seller, totalSales: newSoldCount }
+              }
+            : prev
+        );
+      }
     } catch (err) {
       console.error('Error toggling sold status:', err);
       // Show an error message to the user
@@ -361,8 +382,13 @@ export function ProductDetails() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <div className="text-lg font-medium text-gray-900">{product.seller.name}</div>
-                    {/* REMOVED Seller Rating */}
+                    {/* Make seller name clickable to view their profile */}
+                    <Link 
+                      to={`/seller/${product.seller.id}`}
+                      className="text-lg font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                      {product.seller.name}
+                    </Link>
                   </div>
                 </div>
 
@@ -371,8 +397,10 @@ export function ProductDetails() {
                     <Clock className="w-4 h-4 mr-2" />
                     {t('product.memberSince')} {new Date(product.seller.joinedDate).toLocaleDateString()}
                   </div>
-                  {/* REMOVED Total Sales */}
-                  {/* REMOVED Response Rate */}
+                  <div className="flex items-center">
+                    <ShoppingBag className="w-4 h-4 mr-2" />
+                    {product.seller.totalSales} {t('product.sales')}
+                  </div>
                   <div className="flex items-center">
                     <Phone className="w-4 h-4 mr-2" />
                     {product.seller.phone || t('common.notProvided')}

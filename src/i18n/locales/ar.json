@@ -59,6 +59,8 @@
     "Education": "خدمات تعليمية"
   },
   "product": {
+    "addImages":"إضافة الصور",
+    "imageHelp":"إضافة صور واضحة لمنتجك.",
     "condition": "الحالة",
     "features": "المميزات",
     "sellerInfo": "معلومات البائع",
@@ -123,7 +125,9 @@
     "deleteListing": "حذف الإعلان",
     "editListing": "تعديل الإعلان",
     "viewListing": "عرض الإعلان",
-    "addedOn": "أضيف في"
+    "addedOn": "أضيف في",
+    "updateListing": "تحديث الإعلان",
+    "updateSuccess": "تم تحديث الإعلان بنجاح"
   },
   "auth": {
     "signIn": "تسجيل الدخول",
@@ -149,7 +153,22 @@
     "phoneFormatMauritania": "أدخل 8 أرقام تبدأ بـ 2 أو 3 أو 4",
     "updateProfile": "تحديث الملف الشخصي",
     "profileUpdated": "تم تحديث الملف الشخصي بنجاح",
-    "updateFailed": "فشل تحديث الملف الشخصي"
+    "updateFailed": "فشل تحديث الملف الشخصي",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "resetInstructions": "أدخل بريدك الإلكتروني وسنرسل لك رابطًا لإعادة تعيين كلمة المرور.",
+    "resetEmailSent": "تم إرسال بريد إعادة التعيين",
+    "resetEmailInstructions": "تحقق من بريدك الإلكتروني للحصول على رابط إعادة تعيين كلمة المرور. إذا لم يظهر في غضون دقائق قليلة، تحقق من مجلد البريد العشوائي.",
+    "backToSignIn": "العودة إلى تسجيل الدخول",
+    "rememberPassword": "تتذكر كلمة المرور؟",
+    "setNewPassword": "تعيين كلمة مرور جديدة",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "passwordsDoNotMatch": "كلمات المرور غير متطابقة",
+    "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+    "passwordResetSuccessMessage": "تم إعادة تعيين كلمة المرور بنجاح. يمكنك الآن تسجيل الدخول باستخدام كلمة المرور الجديدة.",
+    "invalidResetLink": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية"
   },
   "common": {
     "loading": "جاري التحميل...",
@@ -172,7 +191,9 @@
     "clearFilters": "مسح الفلاتر",
     "noResults": "لا توجد نتائج",
     "tryAgain": "حاول مرة أخرى",
-    "goBack": "العودة"
+    "goBack": "العودة",
+    "viewDetails": "عرض التفاصيل",
+    "notProvided": "غير متوفر"
   },
   "errors": {
     "invalidFileType": "نوع الملف غير صالح. يُسمح فقط بصور JPEG وPNG وWebP وGIF.",
@@ -194,9 +215,13 @@
     "databaseError": "خطأ في الاتصال بقاعدة البيانات. يرجى المحاولة مرة أخرى لاحقًا.",
     "deleteListingFailed": "فشل حذف الإعلان",
     "updateStatusFailed": "فشل تحديث الحالة",
-    "uploadProblems": "كانت هناك مشاكل مع عمليات الرفع الخاصة بك"
+    "uploadProblems": "كانت هناك مشاكل مع عمليات الرفع الخاصة بك",
+    "updateListingFailed": "فشل تحديث الإعلان",
+    "sellerNotFound": "لم يتم العثور على البائع",
+    "listingsNotFound": "تعذر تحميل إعلانات البائع"
   },
   "footer": {
+    "description":"موقعك الأول لبيع وشراء الملابس والكيمياء والمنتجات المنزلية.",
     "rights": "جميع الحقوق محفوظة",
     "categories": "الفئات",
     "userFeatures": "خدمات المستخدم",
@@ -210,7 +235,11 @@
     "faq": "الأسئلة الشائعة",
     "privacy": "سياسة الخصوصية",
     "terms": "شروط الخدمة",
-    "about": "من نحن"
+    "about": "من نحن",
+    "createProfile": "إنشاء ملف",
+    "myListings": "الإعلانات الخاصة بي",
+    "addNewListing": "إضافة إعلان جديد",
+    "sell": "بيع"
   },
   "noResults": "لم يتم العثور على إعلانات. حاول تعديل فلاتر البحث أو الفئات.",
   "search": {
@@ -220,7 +249,9 @@
     "noResultsFor": "لم يتم العثور على نتائج لـ",
     "tryDifferent": "جرب مصطلح بحث مختلف",
     "searchPlaceholder": "عما تبحث؟",
-    "searchButton": "بحث"
+    "searchButton": "بحث",
+    "newsletter": "انضم إلى نشرتنا",
+    "subscribe": "أدخل بريدك الإلكتروني"
   },
   "home": {
     "trustedBy": "يثق بنا",
@@ -395,7 +426,10 @@
     "cancelChanges": "إلغاء",
     "deleteAccount": "حذف الحساب",
     "confirmDelete": "هل أنت متأكد من رغبتك في حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
-    "deleteConfirm": "نعم، احذف حسابي",
+    "deleteConfirm": "نعم، احذف حسابي", 
+    "viewAllListings": "عرض جميع الإعلانات",
+    "contactInfo": "معلومات الاتصال",
+    "about": "عن البائع",
     "personalInfo": "المعلومات الشخصية",
     "accountSettings": "إعدادات الحساب",
     "changePassword": "تغيير كلمة المرور",
@@ -434,5 +468,14 @@
     "deleteFailed": "فشل حذف الإعلان",
     "statusUpdateSuccess": "تم تحديث الحالة بنجاح",
     "statusUpdateFailed": "فشل تحديث الحالة"
+  },
+  "sellerProfile": {
+    "title": "ملف البائع",
+    "listings": "إعلانات البائع",
+    "noListings": "لا توجد إعلانات",
+    "noListingsMessage": "لم يقم هذا البائع بنشر أي إعلانات بعد.",
+    "viewAllListings": "عرض جميع الإعلانات",
+    "contactInfo": "معلومات الاتصال",
+    "about": "عن البائع"
   }
 }

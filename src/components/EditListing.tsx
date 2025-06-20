@@ -1,25 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { supabase, uploadProductImage, getImageUrl, deleteProductImage } from '../lib/supabase';
 import { categories } from '../data';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ChevronDown, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Image as ImageIcon, X, Trash, Plus } from 'lucide-react';
 
 interface UploadError {
   file: File;
   error: string;
 }
 
-export function AddProduct() {
+export function EditListing() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [uploadErrors, setUploadErrors] = useState<UploadError[]>([]);
   const [mainImagePreview, setMainImagePreview] = useState<string | null>(null);
   const [additionalImagePreviews, setAdditionalImagePreviews] = useState<string[]>([]);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [isCurrentUserSeller, setIsCurrentUserSeller] = useState(false);
+  const [originalImages, setOriginalImages] = useState<{
+    mainImage: string | null;
+    additionalImages: string[];
+  }>({
+    mainImage: null,
+    additionalImages: []
+  });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -30,59 +39,102 @@ export function AddProduct() {
     mainImage: null as File | null,
     additionalImages: [] as File[],
     condition: '',
-    features: ['']
+    features: [''] as string[]
   });
 
-  // Check if user profile exists
+  // Fetch the listing data
   useEffect(() => {
-    async function checkUserProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        // Redirect to auth with return URL
-        navigate('/auth', { state: { mode: 'signin', returnTo: '/add-product' } });
-        return;
-      }
-
-      // Check if user has a profile
-      const { data: profile, error: profileError } = await supabase
-        .from('seller_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (profileError && !profile) {
-        // If no profile exists, create a default one
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-        if (userError || !userData.user) {
-          setError(t('errors.notAuthenticated'));
+    async function fetchListing() {
+      try {
+        setInitialLoading(true);
+        
+        // Check if user is authenticated
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          navigate('/auth', { state: { mode: 'signin', returnTo: `/profile` } });
           return;
         }
 
-        // Create a basic profile
-        const { data: newProfile, error: createError } = await supabase
-          .from('seller_profiles')
-          .insert({
-            id: userData.user.id,
-            name: userData.user.email?.split('@')[0] || 'User',
-            phone: '+222XXXXXXXX' // Default placeholder
-          })
-          .select()
+        // Fetch the listing
+        const { data: listing, error: listingError } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
           .single();
 
-        if (createError) {
-          console.error('Failed to create profile:', createError);
-          setError(t('errors.profileCreationFailed'));
+        if (listingError) {
+          console.error('Error fetching listing:', listingError);
+          setError('Error loading listing');
           return;
         }
 
-        setUserProfile(newProfile);
-      } else {
-        setUserProfile(profile);
+        // Check if the current user is the seller
+        if (listing.seller_id !== user.id) {
+          setError('You do not have permission to edit this listing');
+          return;
+        }
+
+        setIsCurrentUserSeller(true);
+
+        // Separate features from additional images
+        const features: string[] = [];
+        const additionalImages: string[] = [];
+        
+        if (Array.isArray(listing.features)) {
+          for (const item of listing.features) {
+            // If it's a URL, it's probably an image
+            if (typeof item === 'string' && (
+                item.startsWith('http') || 
+                item.startsWith('/') || 
+                item.includes('.jpg') || 
+                item.includes('.png') || 
+                item.includes('.jpeg') ||
+                item.includes('.webp'))) {
+              additionalImages.push(item);
+            } else if (item && typeof item === 'string') {
+              features.push(item);
+            }
+          }
+        }
+
+        // Set original images for comparison later
+        setOriginalImages({
+          mainImage: listing.image_url,
+          additionalImages
+        });
+
+        // Set form data
+        setFormData({
+          title: listing.title || '',
+          description: listing.description || '',
+          price: listing.price?.toString() || '',
+          category: listing.category || '',
+          location: listing.location || '',
+          mainImage: null,
+          additionalImages: [],
+          condition: listing.condition || '',
+          features: features.length > 0 ? features : ['']
+        });
+
+        // Set image previews
+        if (listing.image_url) {
+          setMainImagePreview(getImageUrl(listing.image_url));
+        }
+        
+        setAdditionalImagePreviews(
+          additionalImages.map(img => getImageUrl(img))
+        );
+
+      } catch (err) {
+        console.error('Error:', err);
+        setError('An error occurred while loading the listing');
+      } finally {
+        setInitialLoading(false);
       }
     }
 
-    checkUserProfile();
-  }, [navigate, t]);
+    fetchListing();
+  }, [id, navigate]);
 
   const validateImage = (file: File): string | null => {
     const maxSize = 10 * 1024 * 1024; // 10MB
@@ -110,31 +162,30 @@ export function AddProduct() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error(t('errors.notAuthenticated'));
 
-      // Validate main image
-      if (!formData.mainImage) {
-        throw new Error(t('errors.mainImageRequired'));
-      }
+      // Track which images need to be uploaded
+      let mainImageUrl = originalImages.mainImage;
+      let additionalImageUrls = [...originalImages.additionalImages];
 
-      // Upload main image
-      let mainImageUrl = '';
-      try {
-        mainImageUrl = await uploadProductImage(formData.mainImage, user.id);
-        setUploadProgress(50);
-      } catch (error) {
-        if (error instanceof Error) {
-          setUploadErrors(prev => [...prev, { file: formData.mainImage!, error: error.message }]);
-          throw new Error(t('errors.mainImageUploadFailed'));
+      // Upload main image if changed
+      if (formData.mainImage) {
+        try {
+          mainImageUrl = await uploadProductImage(formData.mainImage, user.id);
+          setUploadProgress(30);
+        } catch (error) {
+          if (error instanceof Error) {
+            setUploadErrors(prev => [...prev, { file: formData.mainImage!, error: error.message }]);
+            throw new Error(t('errors.mainImageUploadFailed'));
+          }
         }
       }
 
-      // Upload additional images
-      const additionalImageUrls = [];
+      // Upload additional images if added
       for (let i = 0; i < formData.additionalImages.length; i++) {
         const file = formData.additionalImages[i];
         try {
           const url = await uploadProductImage(file, user.id);
           additionalImageUrls.push(url);
-          setUploadProgress(50 + (50 * (i + 1) / formData.additionalImages.length));
+          setUploadProgress(30 + (70 * (i + 1) / formData.additionalImages.length));
         } catch (error) {
           if (error instanceof Error) {
             setUploadErrors(prev => [...prev, { file, error: error.message }]);
@@ -144,38 +195,35 @@ export function AddProduct() {
         }
       }
 
-      // Insert product data
-      const { error: insertError } = await supabase
+      // Prepare features array (excluding images)
+      const cleanFeatures = formData.features.filter(f => f.trim() !== '');
+
+      // Update product data
+      const { error: updateError } = await supabase
         .from('products')
-        .insert({
+        .update({
           title: formData.title,
           description: formData.description,
           price: parseFloat(formData.price),
           category: formData.category,
           location: formData.location,
           condition: formData.condition,
-          seller_id: user.id,
           image_url: mainImageUrl,
-          is_sold: false, // Default to not sold when creating a new product
           features: [
-            ...formData.features.filter(f => f.trim() !== ''),
+            ...cleanFeatures,
             ...additionalImageUrls
           ]
-        });
+        })
+        .eq('id', id);
 
-      if (insertError) {
-        console.error('Product insertion error:', insertError);
-        // If product insertion fails, clean up uploaded images
-        await deleteProductImage(mainImageUrl);
-        for (const url of additionalImageUrls) {
-          await deleteProductImage(url);
-        }
-        throw insertError;
+      if (updateError) {
+        console.error('Product update error:', updateError);
+        throw updateError;
       }
 
-      navigate('/');
+      navigate('/profile');
     } catch (err) {
-      console.error('Add product error:', err);
+      console.error('Edit product error:', err);
       setError(err instanceof Error ? err.message : t('errors.unknown'));
     } finally {
       setLoading(false);
@@ -218,7 +266,7 @@ export function AddProduct() {
         reader.onloadend = () => {
           validPreviews.push(reader.result as string);
           if (validPreviews.length === validFiles.length) {
-            setAdditionalImagePreviews(prev => [...prev, ...validPreviews].slice(0, 4));
+            setAdditionalImagePreviews(prev => [...prev, ...validPreviews]);
           }
         };
         reader.readAsDataURL(file);
@@ -227,7 +275,7 @@ export function AddProduct() {
 
     setFormData(prev => ({
       ...prev,
-      additionalImages: [...prev.additionalImages, ...validFiles].slice(0, 4)
+      additionalImages: [...prev.additionalImages, ...validFiles]
     }));
     
     if (newErrors.length > 0) {
@@ -236,15 +284,53 @@ export function AddProduct() {
   };
 
   const removeAdditionalImage = (index: number) => {
-    setFormData({
-      ...formData,
-      additionalImages: formData.additionalImages.filter((_, i) => i !== index)
-    });
+    // If it's an original image, mark it for removal
+    if (index < originalImages.additionalImages.length) {
+      const newAdditionalImages = [...originalImages.additionalImages];
+      newAdditionalImages.splice(index, 1);
+      setOriginalImages({
+        ...originalImages,
+        additionalImages: newAdditionalImages
+      });
+    } else {
+      // If it's a newly added image, remove it from the formData
+      const newIndex = index - originalImages.additionalImages.length;
+      setFormData({
+        ...formData,
+        additionalImages: formData.additionalImages.filter((_, i) => i !== newIndex)
+      });
+    }
+    
+    // Update the previews
     setAdditionalImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  // If we're still checking the user profile, show a loading state
-  if (userProfile === null) {
+  const addFeatureField = () => {
+    setFormData({
+      ...formData,
+      features: [...formData.features, '']
+    });
+  };
+
+  const updateFeature = (index: number, value: string) => {
+    const updatedFeatures = [...formData.features];
+    updatedFeatures[index] = value;
+    setFormData({
+      ...formData,
+      features: updatedFeatures
+    });
+  };
+
+  const removeFeature = (index: number) => {
+    const updatedFeatures = [...formData.features];
+    updatedFeatures.splice(index, 1);
+    setFormData({
+      ...formData,
+      features: updatedFeatures.length > 0 ? updatedFeatures : ['']
+    });
+  };
+
+  if (initialLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -255,18 +341,35 @@ export function AddProduct() {
     );
   }
 
+  if (error && !isCurrentUserSeller) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+        <div className="bg-red-50 text-red-700 p-4 rounded-lg max-w-md w-full">
+          <p className="font-medium">{error}</p>
+        </div>
+        <button
+          onClick={() => navigate('/profile')}
+          className="mt-4 flex items-center text-blue-600 hover:text-blue-800"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          {t('common.backToHome')}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <header className="bg-white py-4 shadow-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <button
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/profile')}
             className="flex items-center text-gray-600 hover:text-gray-900"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            {t('product.back')}
+            {t('common.backToHome')}
           </button>
-          <h1 className="text-xl font-bold text-gray-900">{t('product.addNew')}</h1>
+          <h1 className="text-xl font-bold text-gray-900">{t('product.editListing')}</h1>
           <div className="w-24"></div> {/* Spacer to balance the header */}
         </div>
       </header>
@@ -293,7 +396,7 @@ export function AddProduct() {
           )}
           
           <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-gray-100">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('product.addNew')}</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">{t('product.editListing')}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Left Column - Image Upload */}
@@ -327,12 +430,23 @@ export function AddProduct() {
                             setFormData({...formData, mainImage: null});
                           }}
                           className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"
+                          title="Remove selected main image"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
-                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                          </svg>
+                          <X className="w-5 h-5 text-red-500" />
                         </button>
+                        {mainImagePreview !== getImageUrl(originalImages.mainImage) && (
+                          <button
+                            type="button"
+                            className="absolute bottom-2 right-2 px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs rounded"
+                            onClick={() => {
+                              setMainImagePreview(getImageUrl(originalImages.mainImage));
+                              setFormData({ ...formData, mainImage: null });
+                            }}
+                            title="Reset to original main image"
+                          >
+                            Reset
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-8">
@@ -362,51 +476,45 @@ export function AddProduct() {
                 <div>
                   <h4 className="text-sm font-medium text-gray-700 mb-2">{t('product.additionalImages')}</h4>
                   <div className="grid grid-cols-4 gap-4">
-                    {/* Generate 4 upload slots */}
-                    {[...Array(4)].map((_, index) => {
-                      const hasImage = index < additionalImagePreviews.length;
-                      return (
-                        <div key={index} className="relative">
-                          <label
-                            htmlFor={`additional-image-${index}`}
-                            className={`relative aspect-square flex items-center justify-center border ${hasImage ? 'border-yellow-200' : 'border-dashed border-gray-200'} rounded-lg cursor-pointer transition-colors ${hasImage ? 'bg-white' : 'hover:border-yellow-300 bg-gray-50'}`}
-                          >
-                            {hasImage ? (
-                              <img
-                                src={additionalImagePreviews[index]}
-                                alt={`Additional ${index + 1}`}
-                                className="w-full h-full object-cover rounded-lg"
-                              />
-                            ) : (
-                              <div className="w-6 h-6 text-gray-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                              </div>
-                            )}
-                            <input
-                              id={`additional-image-${index}`}
-                              type="file"
-                              className="hidden"
-                              accept="image/*"
-                              onChange={handleAdditionalImagesChange}
-                            />
-                          </label>
-                          {hasImage && (
-                            <button
-                              type="button"
-                              onClick={() => removeAdditionalImage(index)}
-                              className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                              </svg>
-                            </button>
-                          )}
+                    {/* Show existing and new additional images */}
+                    {additionalImagePreviews.map((preview, index) => (
+                      <div key={index} className="relative">
+                        <div className="aspect-square border border-yellow-200 rounded-lg overflow-hidden">
+                          <img
+                            src={preview}
+                            alt={`Additional ${index + 1}`}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
                         </div>
-                      );
-                    })}
+                        <button
+                          type="button"
+                          onClick={() => removeAdditionalImage(index)}
+                          className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"
+                        >
+                          <Trash className="w-4 h-4 text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                    
+                    {/* Add more images slot */}
+                    {additionalImagePreviews.length < 4 && (
+                      <label
+                        htmlFor="additional-image"
+                        className="aspect-square flex items-center justify-center border border-dashed border-gray-200 rounded-lg cursor-pointer transition-colors hover:border-yellow-300 bg-gray-50"
+                      >
+                        <div className="text-gray-400 flex flex-col items-center">
+                          <Plus className="w-6 h-6 mb-1" />
+                          <span className="text-xs">{t('product.addMore')}</span>
+                        </div>
+                        <input
+                          id="additional-image"
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={handleAdditionalImagesChange}
+                        />
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
@@ -537,6 +645,39 @@ export function AddProduct() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Features */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {t('product.features')}
+                      </label>
+                      {formData.features.map((feature, index) => (
+                        <div key={index} className="flex items-center mb-2">
+                          <input
+                            type="text"
+                            value={feature}
+                            onChange={(e) => updateFeature(index, e.target.value)}
+                            placeholder={t('product.featurePlaceholder')}
+                            className="flex-grow px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeFeature(index)}
+                            className="ml-2 p-2 text-red-500 hover:bg-red-50 rounded-full"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={addFeatureField}
+                        className="mt-2 text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                      >
+                        <Plus className="w-4 h-4 mr-1" />
+                        {t('product.addFeature')}
+                      </button>
+                    </div>
                   </div>
                   
                   {loading && (
@@ -548,21 +689,28 @@ export function AddProduct() {
                     </div>
                   )}
                   
-                  <div className="pt-4">
+                  <div className="pt-4 flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => navigate('/profile')}
+                      className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors"
+                    >
+                      {t('common.cancel')}
+                    </button>
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full py-4 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-70 disabled:cursor-not-allowed text-black font-medium rounded-lg transition-colors flex items-center justify-center"
+                      className="flex-grow py-3 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-70 disabled:cursor-not-allowed text-black font-medium rounded-lg transition-colors flex items-center justify-center"
                     >
                       {loading ? (
                         <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black\" xmlns="http://www.w3.org/2000/svg\" fill="none\" viewBox="0 0 24 24">
+                            <circle className="opacity-25\" cx="12\" cy="12\" r="10\" stroke="currentColor\" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
                           {t('common.uploading')}
                         </>
-                      ) : t('product.publishListing')}
+                      ) : t('common.update')}
                     </button>
                   </div>
                 </form>

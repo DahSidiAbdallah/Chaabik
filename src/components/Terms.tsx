@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { Footer } from './Footer';
 
 export function Terms() {
   const { t } = useTranslation();
@@ -73,7 +72,7 @@ export function Terms() {
           </div>
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 } 

@@ -64,6 +64,8 @@
     "Education": "Services d'éducation"
   },
   "product": {
+    "addImages": "Ajouter des images",
+    "imageHelp": "Ajoutez des images pour votre produit",
     "condition": "État",
     "features": "Caractéristiques",
     "sellerInfo": "Informations sur le vendeur",
@@ -121,7 +123,10 @@
     "view": "Voir",
     "edit": "Modifier",
     "delete": "Supprimer",
-    "readyToSell": "Prêt à vendre quelque chose? Créez votre première annonce maintenant."
+    "readyToSell": "Prêt à vendre quelque chose? Créez votre première annonce maintenant.",
+    "editListing": "Modifier l'annonce",
+    "updateListing": "Mettre à jour l'annonce",
+    "updateSuccess": "Annonce mise à jour avec succès"
   },
   "auth": {
     "signIn": "Se connecter",
@@ -146,7 +151,22 @@
     "passwordSpecial": "Au moins 1 caractère spécial",
     "phoneFormatMauritania": "Entrez 8 chiffres commençant par 2, 3 ou 4",
     "errorFetchingUser": "Erreur lors de la récupération des données utilisateur: {{message}}",
-    "errorInAuthCheck": "Erreur lors de la vérification d'authentification: {{error}}"
+    "errorInAuthCheck": "Erreur lors de la vérification d'authentification: {{error}}",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "sendResetLink": "Envoyer le lien de réinitialisation",
+    "resetInstructions": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "resetEmailSent": "E-mail de réinitialisation envoyé",
+    "resetEmailInstructions": "Vérifiez votre e-mail pour un lien de réinitialisation de mot de passe. S'il n'apparaît pas dans quelques minutes, vérifiez votre dossier spam.",
+    "backToSignIn": "Retour à la connexion",
+    "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+    "setNewPassword": "Définir un nouveau mot de passe",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "passwordResetSuccess": "Réinitialisation du mot de passe réussie",
+    "passwordResetSuccessMessage": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+    "invalidResetLink": "Lien de réinitialisation invalide ou expiré"
   },
   "common": {
     "loading": "Chargement...",
@@ -157,7 +177,12 @@
     "showFilters": "Afficher les filtres",
     "hideFilters": "Masquer les filtres",
     "loadingCategory": "Chargement de la catégorie...",
-    "items": "articles"
+    "items": "articles",
+    "viewDetails": "Voir les détails",
+    "notProvided": "Non fourni",
+    "update": "Mettre à jour",
+    "save": "Enregistrer les modifications",
+    "goBack": "Retour"
   },
   "errors": {
     "invalidFileType": "Type de fichier invalide. Seules les images JPEG, PNG, WebP et GIF sont autorisées.",
@@ -179,9 +204,13 @@
     "databaseError": "Erreur de connexion à la base de données. Veuillez réessayer plus tard.",
     "uploadProblems": "Il y a eu des problèmes avec vos téléchargements",
     "deleteListingFailed": "Échec de la suppression de l'annonce",
-    "updateStatusFailed": "Échec de la mise à jour du statut"
+    "updateStatusFailed": "Échec de la mise à jour du statut",
+    "updateListingFailed": "Échec de la mise à jour de l'annonce",
+    "sellerNotFound": "Vendeur non trouvé",
+    "listingsNotFound": "Impossible de charger les annonces du vendeur"
   },
   "footer": {
+    "description":"votre site numéro un pour vendre et acheter des vêtements, des cosmétiques et des produits de maison.",
     "rights": "Tous droits réservés",
     "categories": "Catégories",
     "userFeatures": "Fonctionnalités utilisateur",
@@ -195,7 +224,13 @@
     "faq": "FAQ",
     "privacy": "Politique de confidentialité",
     "terms": "Conditions d'utilisation",
-    "about": "À propos"
+    "about": "À propos",
+    "createProfile": "Créer un profil",
+    "myListings": "Mes annonces",
+    "addNewListing": "Ajouter une nouvelle annonce",
+    "newsletter": "Joindre à la newsletter",
+    "subscribe": "Entrer votre email",
+    "sell": "Vendre"
   },
   "noResults": "Aucune annonce trouvée. Essayez d'ajuster vos filtres de recherche ou de catégorie.",
   "search": {
@@ -390,7 +425,30 @@
     "statusUpdateFailed": "Échec de la mise à jour du statut"
   },
   "faq": {
-    "deleteAccount": "Comment supprimer mon compte?",
-    "deleteAccountAnswer": "Pour supprimer votre compte, veuillez contacter notre service client via la page de contact avec votre demande de suppression."
+    "howToPost": "Comment publier une annonce ?",
+    "howToPostAnswer": "Pour publier une annonce, connectez-vous à votre compte, cliquez sur le bouton 'Publier une annonce' dans le menu, remplissez tous les détails requis concernant votre article, téléchargez des photos, puis envoyez votre annonce.",
+    "accountNeeded": "Ai-je besoin d'un compte pour acheter ou vendre ?",
+    "accountNeededAnswer": "Vous avez besoin d'un compte pour vendre des articles, mais vous pouvez parcourir les vendeurs et les contacter sans compte. Cependant, créer un compte vous donne accès à des fonctionnalités telles que la sauvegarde des annonces préférées et le suivi de vos propres annonces.",
+    "postingFee": "Y a-t-il des frais pour publier une annonce ?",
+    "postingFeeAnswer": "Non, la publication des annonces sur Chaabik est entièrement gratuite. Nous ne facturons aucun frais pour les annonces de base.",
+    "editListing": "Puis-je modifier mon annonce après sa publication ?",
+    "editListingAnswer": "Oui, vous pouvez modifier vos annonces à tout moment. Il vous suffit d'aller sur votre profil, de trouver l'annonce que vous souhaitez modifier et de cliquer sur le bouton de modification.",
+    "reportIssue": "Comment signaler un problème ou une annonce suspecte ?",
+    "reportIssueAnswer": "Si vous rencontrez une annonce suspecte ou un problème avec un utilisateur, veuillez nous contacter via la page de contact avec les détails du problème.",
+    "deleteAccount": "Comment supprimer mon compte ?",
+    "deleteAccountAnswer": "Pour supprimer votre compte, veuillez contacter notre équipe d'assistance via la page de contact. Notez que la suppression de votre compte entraînera la suppression de toutes vos annonces et informations personnelles.",
+    "paymentMethods": "Quels sont les moyens de paiement recommandés ?",
+    "paymentMethodsAnswer": "Nous recommandons le paiement en espèces pour les transactions en personne. Pour les paiements en ligne, utilisez des méthodes sûres comme les services de transfert d'argent mobile. Soyez toujours prudent et ne transférez jamais d'argent sans avoir vu l'article.",
+    "listingDuration": "Combien de temps mon annonce restera-t-elle active ?",
+    "listingDurationAnswer": "Votre annonce restera active jusqu'à ce que vous la supprimiez ou que vous la marquiez comme vendue. Nous recommandons de mettre à jour vos annonces régulièrement pour les garder à jour."
+  },
+  "sellerProfile": {
+    "title": "Profil du vendeur",
+    "listings": "Annonces du vendeur",
+    "noListings": "Aucune annonce trouvée",
+    "noListingsMessage": "Ce vendeur n'a pas encore publié d'annonces.",
+    "viewAllListings": "Voir toutes les annonces",
+    "contactInfo": "Coordonnées",
+    "about": "À propos du vendeur"
   }
 }

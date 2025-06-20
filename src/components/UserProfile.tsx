@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag, Pencil } from 'lucide-react';
 import { getImageUrl } from '../lib/supabase';
+import { AvatarUpload } from './AvatarUpload';
 import { Footer } from './Footer';
 
 export function UserProfile() {
@@ -16,6 +17,15 @@ export function UserProfile() {
   const [error, setError] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [listingToDelete, setListingToDelete] = useState<string | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [listingToEdit, setListingToEdit] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    price: '',
+    location: '',
+    description: '',
+  });
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -59,6 +69,26 @@ export function UserProfile() {
         }
         
         setUserListings(listings || []);
+        
+        // Update total_sales in seller_profile if it doesn't match the actual count
+        const soldItemsCount = listings ? listings.filter(item => item.is_sold).length : 0;
+        
+        if (profile && profile.total_sales !== soldItemsCount) {
+          const { error: updateError } = await supabase
+            .from('seller_profiles')
+            .update({ total_sales: soldItemsCount })
+            .eq('id', user.id);
+            
+          if (updateError) {
+            console.error('Error updating total_sales:', updateError);
+          } else {
+            // Update local state with the correct count
+            setProfile({
+              ...profile,
+              total_sales: soldItemsCount
+            });
+          }
+        }
       } catch (err) {
         console.error('Profile error:', err);
         setError('An unexpected error occurred');
@@ -120,9 +150,101 @@ export function UserProfile() {
       setUserListings(userListings.map(listing => 
         listing.id === listingId ? { ...listing, is_sold: !currentStatus } : listing
       ));
+      
+      // Update the seller's total_sales count
+      const newSoldCount = userListings.filter(listing => 
+        (listing.id === listingId ? !currentStatus : listing.is_sold)
+      ).length;
+      
+      // Update the profile in the database
+      const { error: profileError } = await supabase
+        .from('seller_profiles')
+        .update({ total_sales: newSoldCount })
+        .eq('id', user.id);
+        
+      if (profileError) {
+        console.error('Error updating total_sales:', profileError);
+      } else {
+        // Update local state
+        setProfile({
+          ...profile,
+          total_sales: newSoldCount
+        });
+      }
     } catch (err) {
       console.error('Update error:', err);
       setError(t('errors.unknown'));
+    }
+  };
+
+  const handleEditListing = (listing: any) => {
+    setListingToEdit(listing);
+    setEditFormData({
+      title: listing.title,
+      price: listing.price.toString(),
+      location: listing.location,
+      description: listing.description,
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!listingToEdit) return;
+    
+    try {
+      setIsUpdating(true);
+      
+      // Validate form data
+      if (!editFormData.title.trim() || !editFormData.price.trim() || !editFormData.location.trim()) {
+        setError('Please fill in all required fields');
+        return;
+      }
+      
+      // Parse price to ensure it's a number
+      const price = parseFloat(editFormData.price);
+      if (isNaN(price) || price <= 0) {
+        setError('Please enter a valid price');
+        return;
+      }
+      
+      // Update the listing
+      const { error } = await supabase
+        .from('products')
+        .update({
+          title: editFormData.title,
+          price: price,
+          location: editFormData.location,
+          description: editFormData.description,
+        })
+        .eq('id', listingToEdit.id);
+        
+      if (error) {
+        console.error('Error updating listing:', error);
+        setError('Failed to update listing');
+        return;
+      }
+      
+      // Update the local state
+      setUserListings(userListings.map(listing => 
+        listing.id === listingToEdit.id 
+          ? { 
+              ...listing, 
+              title: editFormData.title,
+              price: price,
+              location: editFormData.location,
+              description: editFormData.description,
+            } 
+          : listing
+      ));
+      
+      // Close the modal
+      setEditModalOpen(false);
+      setListingToEdit(null);
+    } catch (err) {
+      console.error('Edit error:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -132,7 +254,7 @@ export function UserProfile() {
         <div className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
         </div>
-        <Footer />
+        
       </div>
     );
   }
@@ -160,8 +282,8 @@ export function UserProfile() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow bg-gray-50 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-6">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <button
               onClick={() => navigate('/')}
               className="flex items-center text-gray-600 hover:text-gray-900"
@@ -172,7 +294,7 @@ export function UserProfile() {
             
             <Link 
               to="/add-product" 
-              className="bg-yellow-400 text-gray-800 px-4 py-2 rounded-md font-medium hover:bg-yellow-500 transition-colors flex items-center"
+              className="bg-yellow-400 text-gray-800 px-4 py-2 rounded-md font-medium hover:bg-yellow-500 transition-colors flex items-center justify-center w-full sm:w-auto"
             >
               <span className="mr-2">+</span>
               {t('product.addNew')}
@@ -181,20 +303,40 @@ export function UserProfile() {
 
           <div className="bg-white shadow rounded-lg overflow-hidden">
             {/* Profile Header */}
-            <div className="px-6 py-8 border-b border-gray-200 bg-gray-50">
-              <div className="flex items-center space-x-5">
-                <div className="flex-shrink-0">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-2xl font-bold">
-                    {profile?.name?.charAt(0) || user?.email?.charAt(0) || '?'}
-                  </div>
+            <div className="px-4 py-6 sm:px-6 sm:py-8 border-b border-gray-200 bg-gray-50">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+                <div className="flex-shrink-0 flex justify-center">
+                  <AvatarUpload
+                    userId={user?.id}
+                    avatarUrl={profile?.avatar_url}
+                    onUpload={async (filePath) => {
+                      // Update avatar_url in seller_profiles
+                      const { error } = await supabase
+                        .from('seller_profiles')
+                        .update({ avatar_url: filePath })
+                        .eq('id', user.id);
+                      if (!error) {
+                        // Refetch profile after upload
+                        const { data: updatedProfile } = await supabase
+                          .from('seller_profiles')
+                          .select('*')
+                          .eq('id', user.id)
+                          .single();
+                        setProfile(updatedProfile);
+                      }
+                    }}
+                  />
                 </div>
-                <div>
+                <div className="text-center sm:text-left">
                   <h1 className="text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
                   <p className="text-sm text-gray-500">
                     {t('product.memberSince')} {new Date(profile?.created_at || user?.created_at).toLocaleDateString()}
                   </p>
                   <p className="text-sm text-gray-500 mt-1">{user?.email}</p>
                   <p className="text-sm text-gray-500">{profile?.phone}</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {t('product.sales')}: {profile?.total_sales || 0}
+                  </p>
                 </div>
               </div>
             </div>
@@ -222,7 +364,7 @@ export function UserProfile() {
                   </Link>
                 </div>
               ) : (
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                   <table className="min-w-full divide-y divide-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
@@ -293,6 +435,13 @@ export function UserProfile() {
                                 <Eye className="w-4 h-4" />
                               </Link>
                               <button
+                                onClick={() => handleEditListing(listing)}
+                                className="p-1 rounded-full bg-indigo-100 text-indigo-700"
+                                title={t('product.edit')}
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
                                 onClick={() => {
                                   setListingToDelete(listing.id);
                                   setDeleteModalOpen(true);
@@ -315,7 +464,7 @@ export function UserProfile() {
         </div>
       </div>
 
-      <Footer />
+      
 
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && (
@@ -346,6 +495,127 @@ export function UserProfile() {
           </div>
         </div>
       )}
+
+      {/* Edit Listing Modal */}
+      {editModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between gap-3 text-blue-600 mb-4">
+              <div className="flex items-center gap-2">
+                <Edit className="w-5 h-5" />
+                <h3 className="text-lg font-semibold">{t('product.editListing')}</h3>
+              </div>
+              <button 
+                onClick={() => {
+                  setEditModalOpen(false);
+                  setListingToEdit(null);
+                }}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {error && (
+              <div className="mb-4 bg-red-50 text-red-600 p-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+            
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.title')}
+                </label>
+                <input
+                  id="edit-title"
+                  type="text"
+                  value={editFormData.title}
+                  onChange={(e) => setEditFormData({...editFormData, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-price" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.price')}
+                </label>
+                <div className="flex rounded-md overflow-hidden">
+                  <div className="bg-gray-100 flex items-center justify-center px-3 py-2 border border-r-0 border-gray-300 rounded-l-md">
+                    <span className="text-gray-600 font-medium">MRU</span>
+                  </div>
+                  <input
+                    id="edit-price"
+                    type="number"
+                    value={editFormData.price}
+                    onChange={(e) => setEditFormData({...editFormData, price: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label htmlFor="edit-location" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.location')}
+                </label>
+                <input
+                  id="edit-location"
+                  type="text"
+                  value={editFormData.location}
+                  onChange={(e) => setEditFormData({...editFormData, location: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.description')}
+                </label>
+                <textarea
+                  id="edit-description"
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div className="pt-4 flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setEditModalOpen(false);
+                    setListingToEdit(null);
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={isUpdating}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  {isUpdating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('common.updating', 'Updating...')}
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      {t('common.save')}
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-} 
+}

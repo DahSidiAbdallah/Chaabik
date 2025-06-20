@@ -67,33 +67,27 @@ export async function uploadProductImage(file: File, userId: string): Promise<st
 
 // Helper to get public URL for an image
 export function getImageUrl(path: string): string {
-  if (!path) return '/placeholder-image.jpg';
-  
+  if (!path) return '/placeholder-avatar.png';
+
   // If already a full URL, return as is
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
-  
-  // Extract the filename for paths that might include folders
-  const filename = path.includes('/') ? path.split('/').pop() : path;
-  
-  // Check if this is a simple filename (like 1747132858821.png)
-  if (filename && !path.includes('/')) {
-    // For files directly in the bucket root
-    const { data } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(filename);
-    console.log('Generated URL for', filename, ':', data.publicUrl);
-    return data.publicUrl;
-  }
-  
-  // Handle more complex paths
+
+  // Heuristic: use 'avatars' bucket for avatar images, 'product-images' for product images
+  const isAvatar = path.includes('avatar') || path.includes('avatars');
+  const bucket = isAvatar ? 'avatars' : 'product-images';
+
   const { data } = supabase.storage
-    .from('product-images')
+    .from(bucket)
     .getPublicUrl(path);
-    
-  console.log('Generated URL for', path, ':', data.publicUrl);
-  return data.publicUrl;
+
+  // Use different placeholders for avatars and product images
+  if (isAvatar) {
+    return data?.publicUrl || '/placeholder-avatar.png';
+  } else {
+    return data?.publicUrl || '/placeholder-image.jpg';
+  }
 }
 
 // Helper to delete an image

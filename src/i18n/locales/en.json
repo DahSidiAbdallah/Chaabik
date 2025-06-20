@@ -122,7 +122,18 @@
     "dragOrClick": "Drag and drop or click to upload",
     "mainImageHelp": "This will be your primary photo",
     "browseFiles": "Browse Files",
-    "publish": "Publish Listing"
+    "publish": "Publish Listing",
+    "status": "Status",
+    "dateAdded": "Date Added",
+    "available": "Available",
+    "actions": "Actions",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "readyToSell": "Ready to sell something? Create your first listing now.",
+    "editListing": "Edit Listing",
+    "updateListing": "Update Listing",
+    "updateSuccess": "Listing updated successfully"
   },
   "auth": {
     "signIn": "Sign In",
@@ -147,7 +158,22 @@
     "passwordSpecial": "At least 1 special character",
     "phoneFormatMauritania": "Enter 8 digits starting with 2, 3, or 4",
     "errorFetchingUser": "Error fetching user data: {{message}}",
-    "errorInAuthCheck": "Error during authentication check: {{error}}"
+    "errorInAuthCheck": "Error during authentication check: {{error}}",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "sendResetLink": "Send Reset Link",
+    "resetInstructions": "Enter your email address and we'll send you a link to reset your password.",
+    "resetEmailSent": "Reset email sent",
+    "resetEmailInstructions": "Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.",
+    "backToSignIn": "Back to sign in",
+    "rememberPassword": "Remember your password?",
+    "setNewPassword": "Set New Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "passwordResetSuccess": "Password reset successful",
+    "passwordResetSuccessMessage": "Your password has been reset successfully. You can now sign in with your new password.",
+    "invalidResetLink": "Invalid or expired reset link"
   },
   "common": {
     "loading": "Loading...",
@@ -160,7 +186,10 @@
     "loadingCategory": "Loading category...",
     "items": "items",
     "viewDetails": "View Details",
-    "notProvided": "Not provided"
+    "notProvided": "Not provided",
+    "update": "Update",
+    "save": "Save Changes",
+    "goBack": "Go Back"
   },
   "errors": {
     "invalidFileType": "Invalid file type. Only JPEG, PNG, WebP, and GIF images are allowed.",
@@ -180,9 +209,15 @@
     "phoneExists": "This phone number is already registered. Please use a different number.",
     "passwordRequirements": "Password doesn't meet all requirements",
     "databaseError": "Error connecting to database. Please try again later.",
-    "uploadProblems": "There were problems with your uploads"
+    "uploadProblems": "There were problems with your uploads",
+    "deleteListingFailed": "Failed to delete listing",
+    "updateStatusFailed": "Failed to update status",
+    "updateListingFailed": "Failed to update listing",
+    "sellerNotFound": "Seller not found",
+    "listingsNotFound": "Could not load seller's listings"
   },
   "footer": {
+    "description":"your number one site for selling and buying clothes, cosmetics and home products.",
     "rights": "All rights reserved",
     "categories": "Categories",
     "userFeatures": "User Features",
@@ -196,7 +231,13 @@
     "faq": "FAQ",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "about": "About Us"
+    "about": "About Us",
+    "createProfile": "Create Profile",
+    "myListings": "My Listings",
+    "addNewListing": "Add New Listing",
+    "newsletter": "Join our newsletter",
+    "subscribe": "Enter your email",
+    "sell": "Sell"
   },
   "noResults": "No listings found. Try adjusting your search or category filters.",
   "search": {
@@ -381,5 +422,22 @@
     "databaseCheckError": "Database check error: {{error}}",
     "demoMessage": "You're viewing demo listings. Connect to a database for real-time data.",
     "noListings": "No listings found"
+  },
+  "confirmation": {
+    "confirmDelete": "Confirm Delete",
+    "deleteConfirmMessage": "Are you sure you want to delete this listing? This action cannot be undone.",
+    "deleteSuccess": "Listing deleted successfully",
+    "deleteFailed": "Failed to delete listing",
+    "statusUpdateSuccess": "Status updated successfully",
+    "statusUpdateFailed": "Failed to update status"
+  },
+  "sellerProfile": {
+    "title": "Seller Profile",
+    "listings": "Seller's Listings",
+    "noListings": "No Listings Found",
+    "noListingsMessage": "This seller hasn't posted any listings yet.",
+    "viewAllListings": "View All Listings",
+    "contactInfo": "Contact Information",
+    "about": "About the Seller"
   }
 }
