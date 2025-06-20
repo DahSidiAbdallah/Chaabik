@@ -428,12 +428,25 @@ export function EditListing() {
                             e.preventDefault();
                             setMainImagePreview(null);
                             setFormData({...formData, mainImage: null});
-                            // Don't clear originalImages.mainImage here - we'll handle that during submit
                           }}
                           className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"
+                          title="Remove selected main image"
                         >
                           <X className="w-5 h-5 text-red-500" />
                         </button>
+                        {mainImagePreview !== getImageUrl(originalImages.mainImage) && (
+                          <button
+                            type="button"
+                            className="absolute bottom-2 right-2 px-2 py-1 bg-gray-100 hover:bg-gray-200 text-xs rounded"
+                            onClick={() => {
+                              setMainImagePreview(getImageUrl(originalImages.mainImage));
+                              setFormData({ ...formData, mainImage: null });
+                            }}
+                            title="Reset to original main image"
+                          >
+                            Reset
+                          </button>
+                        )}
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center py-8">
