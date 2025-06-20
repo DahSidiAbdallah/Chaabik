@@ -191,7 +191,7 @@ export function UserMenu() {
             
             {/* Recent Listings */}
             <div className="px-4 py-2 border-b border-gray-100">
-              <h3 className="font-medium text-gray-900 text-sm">Recent Listings</h3>
+              <h3 className="font-medium text-gray-900 text-sm">{t('listings.recent')}</h3>
             </div>
             
             <div className="max-h-48 overflow-y-auto">
@@ -230,7 +230,7 @@ export function UserMenu() {
                   className="text-sm text-blue-600 hover:text-blue-800 flex items-center justify-center"
                   onClick={() => setIsOpen(false)}
                 >
-                  View all listings
+                  {t('listings.all')}
                 </Link>
               </div>
             )}

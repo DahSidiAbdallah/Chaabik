@@ -59,6 +59,8 @@
     "Education": "خدمات تعليمية"
   },
   "product": {
+    "addImages":"إضافة الصور",
+    "imageHelp":"إضافة صور واضحة لمنتجك.",
     "condition": "الحالة",
     "features": "المميزات",
     "sellerInfo": "معلومات البائع",
@@ -219,6 +221,7 @@
     "listingsNotFound": "تعذر تحميل إعلانات البائع"
   },
   "footer": {
+    "description":"موقعك الأول لبيع وشراء الملابس والكيمياء والمنتجات المنزلية.",
     "rights": "جميع الحقوق محفوظة",
     "categories": "الفئات",
     "userFeatures": "خدمات المستخدم",
@@ -232,7 +235,11 @@
     "faq": "الأسئلة الشائعة",
     "privacy": "سياسة الخصوصية",
     "terms": "شروط الخدمة",
-    "about": "من نحن"
+    "about": "من نحن",
+    "createProfile": "إنشاء ملف",
+    "myListings": "الإعلانات الخاصة بي",
+    "addNewListing": "إضافة إعلان جديد",
+    "sell": "بيع"
   },
   "noResults": "لم يتم العثور على إعلانات. حاول تعديل فلاتر البحث أو الفئات.",
   "search": {
@@ -242,7 +249,9 @@
     "noResultsFor": "لم يتم العثور على نتائج لـ",
     "tryDifferent": "جرب مصطلح بحث مختلف",
     "searchPlaceholder": "عما تبحث؟",
-    "searchButton": "بحث"
+    "searchButton": "بحث",
+    "newsletter": "انضم إلى نشرتنا",
+    "subscribe": "أدخل بريدك الإلكتروني"
   },
   "home": {
     "trustedBy": "يثق بنا",
@@ -417,7 +426,10 @@
     "cancelChanges": "إلغاء",
     "deleteAccount": "حذف الحساب",
     "confirmDelete": "هل أنت متأكد من رغبتك في حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.",
-    "deleteConfirm": "نعم، احذف حسابي",
+    "deleteConfirm": "نعم، احذف حسابي", 
+    "viewAllListings": "عرض جميع الإعلانات",
+    "contactInfo": "معلومات الاتصال",
+    "about": "عن البائع",
     "personalInfo": "المعلومات الشخصية",
     "accountSettings": "إعدادات الحساب",
     "changePassword": "تغيير كلمة المرور",

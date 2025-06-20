@@ -562,7 +562,7 @@ export function AddProduct() {
                           </svg>
                           {t('common.uploading')}
                         </>
-                      ) : t('product.publish')}
+                      ) : t('product.publishListing')}
                     </button>
                   </div>
                 </form>

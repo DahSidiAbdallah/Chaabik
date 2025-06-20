@@ -13,14 +13,14 @@ export function Footer() {
             <span className="text-xl font-bold text-yellow-400">CHAABIK</span>
           </div>
           <p className="text-sm text-gray-600 mb-6">
-            Your number one site for selling and buying clothes, cosmetics and home goods.
+            {t('footer.description')}
           </p>
           <div className="mt-6">
-            <h3 className="text-sm font-medium mb-2">Join our newsletter</h3>
+            <h3 className="text-sm font-medium mb-2">{t('footer.newsletter')}</h3>
             <div className="flex">
               <input 
                 type="email" 
-                placeholder="Enter your e-mail" 
+                placeholder={t('footer.subscribe')} 
                 className="p-2 text-sm border border-r-0 border-gray-300 flex-grow"
               />
               <button className="bg-blue-500 text-white p-2 rounded-r">
@@ -33,7 +33,7 @@ export function Footer() {
         </div>
         
         <div>
-          <h3 className="font-medium mb-4">Sell</h3>
+          <h3 className="font-medium mb-4">{t('footer.sell')}</h3>
           <ul className="space-y-2 text-sm">
             <li>
               <Link 
@@ -41,7 +41,7 @@ export function Footer() {
                 state={{ mode: 'signup' }}
                 className="text-gray-600 hover:text-gray-900"
               >
-                Create a profile
+                {t('footer.createProfile')}
               </Link>
             </li>
             <li>
@@ -49,7 +49,7 @@ export function Footer() {
                 to="/profile" 
                 className="text-gray-600 hover:text-gray-900"
               >
-                My listings
+                {t('footer.myListings')}
               </Link>
             </li>
             <li>
@@ -57,21 +57,21 @@ export function Footer() {
                 to="/add-product" 
                 className="text-gray-600 hover:text-gray-900"
               >
-                Add new listing
+                {t('footer.addNewListing')}
               </Link>
             </li>
           </ul>
         </div>
         
         <div>
-          <h3 className="font-medium mb-4">Information and Help</h3>
+          <h3 className="font-medium mb-4">{t('footer.helpInfo')}</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/faq" className="text-gray-600 hover:text-gray-900">FAQ</Link></li>
-            <li><Link to="/contact" className="text-gray-600 hover:text-gray-900">Contact us</Link></li>
-            <li><Link to="/terms" className="text-gray-600 hover:text-gray-900">Terms and conditions</Link></li>
-            <li><Link to="/privacy" className="text-gray-600 hover:text-gray-900">Privacy policy</Link></li>
-            <li><Link to="/rules" className="text-gray-600 hover:text-gray-900">Rules</Link></li>
-            <li><Link to="/safety" className="text-gray-600 hover:text-gray-900">Safety Tips</Link></li>
+            <li><Link to="/faq" className="text-gray-600 hover:text-gray-900">{t('footer.faq')}</Link></li>
+            <li><Link to="/contact" className="text-gray-600 hover:text-gray-900">{t('footer.contact')}</Link></li>
+            <li><Link to="/terms" className="text-gray-600 hover:text-gray-900">{t('footer.terms')}</Link></li>
+            <li><Link to="/privacy" className="text-gray-600 hover:text-gray-900">{t('footer.privacy')}</Link></li>
+            <li><Link to="/rules" className="text-gray-600 hover:text-gray-900">{t('footer.rules')}</Link></li>
+            <li><Link to="/safety" className="text-gray-600 hover:text-gray-900">{t('footer.safety')}</Link></li>
           </ul>
         </div>
       </div>
@@ -79,9 +79,9 @@ export function Footer() {
       <div className="border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 py-6 flex justify-between text-sm text-gray-500">
           <div>
-            <Link to="/terms" className="text-gray-600 hover:text-gray-900">Terms and conditions</Link>
+            <Link to="/terms" className="text-gray-600 hover:text-gray-900">{t('footer.terms')}</Link>
             <span className="mx-3">|</span>
-            <Link to="/privacy" className="text-gray-600 hover:text-gray-900">Privacy policy</Link>
+            <Link to="/privacy" className="text-gray-600 hover:text-gray-900">{t('footer.privacy')}</Link>
           </div>
         </div>
       </div>

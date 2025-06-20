@@ -217,6 +217,7 @@
     "listingsNotFound": "Could not load seller's listings"
   },
   "footer": {
+    "description":"your number one site for selling and buying clothes, cosmetics and home products.",
     "rights": "All rights reserved",
     "categories": "Categories",
     "userFeatures": "User Features",
@@ -230,7 +231,13 @@
     "faq": "FAQ",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "about": "About Us"
+    "about": "About Us",
+    "createProfile": "Create Profile",
+    "myListings": "My Listings",
+    "addNewListing": "Add New Listing",
+    "newsletter": "Join our newsletter",
+    "subscribe": "Enter your email",
+    "sell": "Sell"
   },
   "noResults": "No listings found. Try adjusting your search or category filters.",
   "search": {
