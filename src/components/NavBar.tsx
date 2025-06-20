@@ -196,6 +196,27 @@ function PopupMenuCard({
         className="flex flex-col items-stretch gap-3 mt-2 px-5 pb-7 pt-12 overflow-y-auto"
         style={{ maxHeight: 'calc(90vh - 16px)' }}
       >
+        <button
+          onClick={() => {
+            handleAllCategories();
+            onClose();
+          }}
+          className={`text-lg font-semibold text-left rounded-lg px-3 py-2 transition ${!selectedCategory ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+        >
+          {t('categories.all')}
+        </button>
+        {categories.slice(0, 6).map(category => (
+          <button
+            key={category.id}
+            onClick={() => {
+              handleCategorySelect(category.id);
+              onClose();
+            }}
+            className={`text-lg font-semibold text-left rounded-lg px-3 py-2 transition ${selectedCategory === category.id ? 'bg-blue-50 text-blue-700' : 'hover:bg-gray-100 text-gray-700'}`}
+          >
+            {t(`categories.${category.name}`)}
+          </button>
+        ))}
         <hr className="my-3" />
         <Link to="/terms" className="text-base font-medium rounded-lg px-3 py-2 hover:bg-gray-100 text-gray-700 text-left block">Terms</Link>
         <Link to="/privacy" className="text-base font-medium rounded-lg px-3 py-2 hover:bg-gray-100 text-gray-700 text-left block">Privacy</Link>
