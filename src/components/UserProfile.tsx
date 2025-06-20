@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Edit, Trash, Eye, Check, X, ShoppingBag, Pencil } from 'lucide-react';
-import { getImageUrl, uploadProductImage, deleteProductImage } from '../lib/supabase';
+import { getImageUrl } from '../lib/supabase';
 import { Footer } from './Footer';
 
 export function UserProfile() {
@@ -25,11 +25,6 @@ export function UserProfile() {
     description: '',
   });
   const [isUpdating, setIsUpdating] = useState(false);
-  const [editImages, setEditImages] = useState<string[]>([]); // URLs of existing images
-  const [newImages, setNewImages] = useState<File[]>([]); // New files to upload
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]); // Previews for new files
-  const [mainImage, setMainImage] = useState<string | null>(null); // Main image URL or preview
-  const [mainImageFile, setMainImageFile] = useState<File | null>(null); // Main image file
 
   useEffect(() => {
     async function fetchUserProfile() {
@@ -102,7 +97,7 @@ export function UserProfile() {
     }
     
     fetchUserProfile();
-  }, []); // Only run on mount
+  }, [navigate]);
 
   const handleDeleteListing = async () => {
     if (!listingToDelete) return;
@@ -132,41 +127,44 @@ export function UserProfile() {
 
   const handleToggleSoldStatus = async (listingId: string, currentStatus: boolean) => {
     try {
-      // Optimistically update local state (optional: can comment out if you want to wait for DB)
-      // setUserListings(userListings.map(listing =>
-      //   listing.id === listingId ? { ...listing, is_sold: !currentStatus } : listing
-      // ));
-
-      // Update in DB
+      // Make a more specific update with just the fields we need
+      const updateData = { 
+        is_sold: !currentStatus
+        // updated_at will be set automatically by the trigger
+      };
+      
       const { error } = await supabase
         .from('products')
-        .update({ is_sold: !currentStatus })
+        .update(updateData)
         .eq('id', listingId);
-
+        
       if (error) {
         console.error('Error updating listing status:', error);
-        setError(`${t('errors.updateStatusFailed')}: ${error.message || 'Failed to update listing status'}`);
+        const errorMessage = error.message || 'Failed to update listing status';
+        setError(`${t('errors.updateStatusFailed')}: ${errorMessage}`);
         return;
       }
-
-      // Only update local state if DB update succeeded
-      setUserListings(userListings.map(listing =>
+      
+      // Update the local state to reflect the change
+      setUserListings(userListings.map(listing => 
         listing.id === listingId ? { ...listing, is_sold: !currentStatus } : listing
       ));
-
+      
       // Update the seller's total_sales count
-      const newSoldCount = userListings.filter(listing =>
+      const newSoldCount = userListings.filter(listing => 
         (listing.id === listingId ? !currentStatus : listing.is_sold)
       ).length;
-
+      
+      // Update the profile in the database
       const { error: profileError } = await supabase
         .from('seller_profiles')
         .update({ total_sales: newSoldCount })
         .eq('id', user.id);
-
+        
       if (profileError) {
         console.error('Error updating total_sales:', profileError);
       } else {
+        // Update local state
         setProfile({
           ...profile,
           total_sales: newSoldCount
@@ -186,66 +184,28 @@ export function UserProfile() {
       location: listing.location,
       description: listing.description,
     });
-    setMainImage(listing.image_url ? getImageUrl(listing.image_url) : null);
-    setMainImageFile(null);
-    // Assume additional images are in listing.features as URLs
-    const additional = Array.isArray(listing.features)
-      ? listing.features.filter((f: string) => typeof f === 'string' && (f.startsWith('http') || f.startsWith('/')))
-      : [];
-    setEditImages(additional);
-    setNewImages([]);
-    setImagePreviews([]);
     setEditModalOpen(true);
-  };
-
-  const handleMainImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setMainImageFile(file);
-      setMainImage(URL.createObjectURL(file));
-    }
-  };
-
-  const handleAddImages = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setNewImages(prev => [...prev, ...files]);
-    setImagePreviews(prev => [...prev, ...files.map(f => URL.createObjectURL(f))]);
-  };
-
-  const handleRemoveExistingImage = (idx: number) => {
-    setEditImages(editImages.filter((_, i) => i !== idx));
-  };
-
-  const handleRemoveNewImage = (idx: number) => {
-    setNewImages(newImages.filter((_, i) => i !== idx));
-    setImagePreviews(imagePreviews.filter((_, i) => i !== idx));
   };
 
   const handleSaveEdit = async () => {
     if (!listingToEdit) return;
+    
     try {
       setIsUpdating(true);
-      setError(null);
+      
+      // Validate form data
       if (!editFormData.title.trim() || !editFormData.price.trim() || !editFormData.location.trim()) {
         setError('Please fill in all required fields');
         return;
       }
+      
+      // Parse price to ensure it's a number
       const price = parseFloat(editFormData.price);
       if (isNaN(price) || price <= 0) {
         setError('Please enter a valid price');
         return;
       }
-      // Upload main image if changed
-      let mainImageUrl = listingToEdit.image_url;
-      if (mainImageFile) {
-        mainImageUrl = await uploadProductImage(mainImageFile, user.id);
-      }
-      // Upload new additional images
-      let additionalImageUrls = [...editImages];
-      for (const file of newImages) {
-        const url = await uploadProductImage(file, user.id);
-        additionalImageUrls.push(url);
-      }
+      
       // Update the listing
       const { error } = await supabase
         .from('products')
@@ -254,31 +214,33 @@ export function UserProfile() {
           price: price,
           location: editFormData.location,
           description: editFormData.description,
-          image_url: mainImageUrl,
-          features: additionalImageUrls,
         })
         .eq('id', listingToEdit.id);
+        
       if (error) {
+        console.error('Error updating listing:', error);
         setError('Failed to update listing');
         return;
       }
-      // Update local state
-      setUserListings(userListings.map(listing =>
-        listing.id === listingToEdit.id
-          ? {
-              ...listing,
+      
+      // Update the local state
+      setUserListings(userListings.map(listing => 
+        listing.id === listingToEdit.id 
+          ? { 
+              ...listing, 
               title: editFormData.title,
               price: price,
               location: editFormData.location,
               description: editFormData.description,
-              image_url: mainImageUrl,
-              features: additionalImageUrls,
-            }
+            } 
           : listing
       ));
+      
+      // Close the modal
       setEditModalOpen(false);
       setListingToEdit(null);
     } catch (err) {
+      console.error('Edit error:', err);
       setError('An unexpected error occurred');
     } finally {
       setIsUpdating(false);
@@ -519,11 +481,11 @@ export function UserProfile() {
       {/* Edit Listing Modal */}
       {editModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-0 max-w-2xl w-full mx-4 max-h-[95vh] overflow-y-auto shadow-2xl border border-gray-100">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50 rounded-t-xl">
-              <div className="flex items-center gap-2 text-blue-600">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between gap-3 text-blue-600 mb-4">
+              <div className="flex items-center gap-2">
                 <Edit className="w-5 h-5" />
-                <h3 className="text-lg font-bold">{t('product.editListing')}</h3>
+                <h3 className="text-lg font-semibold">{t('product.editListing')}</h3>
               </div>
               <button 
                 onClick={() => {
@@ -535,101 +497,102 @@ export function UserProfile() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+            
             {error && (
-              <div className="mb-4 bg-red-50 text-red-600 p-3 rounded-md text-sm mx-6 mt-4">
+              <div className="mb-4 bg-red-50 text-red-600 p-3 rounded-md text-sm">
                 {error}
               </div>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
-              {/* Left: Images */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-3 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5V19a2 2 0 002 2h14a2 2 0 002-2v-2.5M16 3.13a4 4 0 010 7.75M12 7v.01M12 7a4 4 0 00-4 4v1a4 4 0 004 4 4 4 0 004-4v-1a4 4 0 00-4-4z" /></svg>
-                    {t('product.addImages')}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-4">{t('product.imageHelp')}</p>
-                </div>
-                {/* Main Image Upload */}
-                <div className="mb-4">
-                  <label className="relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer transition-colors hover:border-yellow-300 bg-gray-50">
-                    {mainImage ? (
-                      <div className="relative w-full h-full">
-                        <img src={mainImage} alt="Preview" className="w-full h-full object-contain rounded-lg" />
-                        <button type="button" onClick={e => { e.preventDefault(); setMainImage(null); setMainImageFile(null); }} className="absolute top-2 right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"><X className="w-5 h-5 text-red-500" /></button>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center py-8">
-                        <svg className="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                        <span className="text-gray-700 font-medium text-sm mb-1">{t('product.dragOrClick')}</span>
-                        <span className="text-xs text-gray-400 mb-2">{t('product.mainImageHelp')}</span>
-                        <span className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 transition-colors rounded-md text-sm font-medium">{t('product.browseFiles')}</span>
-                      </div>
-                    )}
-                    <input type="file" accept="image/*" className="hidden" onChange={handleMainImageChange} />
-                  </label>
-                </div>
-                {/* Additional Images */}
-                <div>
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">{t('product.additionalImages')}</h4>
-                  <div className="grid grid-cols-4 gap-4">
-                    {editImages.map((img, idx) => (
-                      <div key={idx} className="relative aspect-square border border-yellow-200 rounded-lg overflow-hidden">
-                        <img src={getImageUrl(img)} alt="listing" className="w-full h-full object-cover rounded-lg" />
-                        <button type="button" onClick={() => handleRemoveExistingImage(idx)} className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"><X className="w-4 h-4 text-red-500" /></button>
-                      </div>
-                    ))}
-                    {imagePreviews.map((img, idx) => (
-                      <div key={idx} className="relative aspect-square border border-yellow-200 rounded-lg overflow-hidden">
-                        <img src={img} alt="preview" className="w-full h-full object-cover rounded-lg" />
-                        <button type="button" onClick={() => handleRemoveNewImage(idx)} className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md hover:bg-red-50"><X className="w-4 h-4 text-red-500" /></button>
-                      </div>
-                    ))}
-                    {/* Add more images slot */}
-                    <label className="aspect-square flex items-center justify-center border border-dashed border-gray-200 rounded-lg cursor-pointer transition-colors hover:border-yellow-300 bg-gray-50">
-                      <div className="text-gray-400 flex flex-col items-center">
-                        <svg className="w-6 h-6 mb-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                        <span className="text-xs">{t('product.addMore')}</span>
-                      </div>
-                      <input type="file" accept="image/*" multiple className="hidden" onChange={handleAddImages} />
-                    </label>
+            
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.title')}
+                </label>
+                <input
+                  id="edit-title"
+                  type="text"
+                  value={editFormData.title}
+                  onChange={(e) => setEditFormData({...editFormData, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-price" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.price')}
+                </label>
+                <div className="flex rounded-md overflow-hidden">
+                  <div className="bg-gray-100 flex items-center justify-center px-3 py-2 border border-r-0 border-gray-300 rounded-l-md">
+                    <span className="text-gray-600 font-medium">MRU</span>
                   </div>
+                  <input
+                    id="edit-price"
+                    type="number"
+                    value={editFormData.price}
+                    onChange={(e) => setEditFormData({...editFormData, price: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
                 </div>
               </div>
-              {/* Right: Details Form */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-3">{t('product.details')}</h3>
-                  <p className="text-sm text-gray-500 mb-4">{t('product.detailsHelp')}</p>
-                </div>
-                <div>
-                  <label htmlFor="edit-title" className="block text-sm font-medium text-gray-700 mb-2">{t('product.title')}</label>
-                  <input id="edit-title" type="text" value={editFormData.title} onChange={e => setEditFormData({ ...editFormData, title: e.target.value })} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent" required />
-                </div>
-                <div>
-                  <label htmlFor="edit-price" className="block text-sm font-medium text-gray-700 mb-2">{t('product.price')}</label>
-                  <div className="flex rounded-lg overflow-hidden">
-                    <div className="bg-gray-100 flex items-center justify-center px-3 py-2 border border-r-0 border-gray-300 rounded-l-lg">
-                      <span className="text-gray-600 font-medium whitespace-nowrap">MRU</span>
-                    </div>
-                    <input id="edit-price" type="number" value={editFormData.price} onChange={e => setEditFormData({ ...editFormData, price: e.target.value })} className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent" required />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">{t('product.priceCurrency')}</p>
-                </div>
-                <div>
-                  <label htmlFor="edit-location" className="block text-sm font-medium text-gray-700 mb-2">{t('product.location')}</label>
-                  <input id="edit-location" type="text" value={editFormData.location} onChange={e => setEditFormData({ ...editFormData, location: e.target.value })} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent" required />
-                </div>
-                <div>
-                  <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700 mb-2">{t('product.description')}</label>
-                  <textarea id="edit-description" value={editFormData.description} onChange={e => setEditFormData({ ...editFormData, description: e.target.value })} rows={4} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent" required />
-                </div>
-                <div className="pt-4 flex gap-3">
-                  <button type="button" onClick={() => { setEditModalOpen(false); setListingToEdit(null); }} className="flex-1 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">{t('common.cancel')}</button>
-                  <button type="button" onClick={handleSaveEdit} disabled={isUpdating} className="flex-1 py-3 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-70 disabled:cursor-not-allowed text-black font-medium rounded-lg transition-colors flex items-center justify-center">
-                    {isUpdating ? (<><svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>{t('common.updating', 'Updating...')}</>) : (<><Check className="w-4 h-4 mr-2" />{t('common.save')}</>)}
-                  </button>
-                </div>
+              
+              <div>
+                <label htmlFor="edit-location" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.location')}
+                </label>
+                <input
+                  id="edit-location"
+                  type="text"
+                  value={editFormData.location}
+                  onChange={(e) => setEditFormData({...editFormData, location: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="edit-description" className="block text-sm font-medium text-gray-700 mb-1">
+                  {t('product.description')}
+                </label>
+                <textarea
+                  id="edit-description"
+                  value={editFormData.description}
+                  onChange={(e) => setEditFormData({...editFormData, description: e.target.value})}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              
+              <div className="pt-4 flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setEditModalOpen(false);
+                    setListingToEdit(null);
+                  }}
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={isUpdating}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+                >
+                  {isUpdating ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {t('common.updating', 'Updating...')}
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4 mr-2" />
+                      {t('common.save')}
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
