@@ -1,7 +1,7 @@
 import React from 'react';
 import { Footer } from './Footer';
 import { Outlet } from 'react-router-dom';
-import NavBar from './Navbar';
+import NavBar from './NavBar';
 
 // If you create a Navbar later, import it here
 // import { Navbar } from './Navbar';
