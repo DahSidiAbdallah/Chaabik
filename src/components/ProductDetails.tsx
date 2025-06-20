@@ -176,16 +176,13 @@ export function ProductDetails() {
         return;
       }
       
-      // Update local state
-      setProduct({
-        ...product,
-        is_sold: !product.is_sold
-      });
-      
-      // Update the seller's total_sales count
-      const newSoldCount = product.is_sold ? 
-        Math.max((product.seller.totalSales || 0) - 1, 0) : 
-        (product.seller.totalSales || 0) + 1;
+      setProduct(prev =>
+        prev ? { ...prev, is_sold: !prev.is_sold } : prev
+      );
+
+      const newSoldCount = product.is_sold
+        ? Math.max((product.seller.totalSales || 0) - 1, 0)
+        : (product.seller.totalSales || 0) + 1;
       
       const { error: profileError } = await supabase
         .from('seller_profiles')
@@ -195,14 +192,14 @@ export function ProductDetails() {
       if (profileError) {
         console.error('Error updating total_sales:', profileError);
       } else {
-        // Update local state
-        setProduct({
-          ...product,
-          seller: {
-            ...product.seller,
-            totalSales: newSoldCount
-          }
-        });
+        setProduct(prev =>
+          prev
+            ? {
+                ...prev,
+                seller: { ...prev.seller, totalSales: newSoldCount }
+              }
+            : prev
+        );
       }
     } catch (err) {
       console.error('Error toggling sold status:', err);
