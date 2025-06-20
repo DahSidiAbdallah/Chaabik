@@ -594,12 +594,7 @@ export function HomePage() {
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
           <div className="hidden lg:flex items-center space-x-8 flex-1 justify-center">
-            <button 
-              onClick={handleAllCategories}
-              className={`text-sm font-medium ${!selectedCategory ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-gray-900'}`}
-            >
-              {t('categories.all')}
-            </button>
+           
             {categories.slice(0, 6).map(category => (
               <button 
                 key={category.id}
