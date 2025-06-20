@@ -19,6 +19,7 @@ interface ListingCardProps {
   seller: {
     id?: string; // Add seller ID for linking to seller profile
     name: string;
+    avatar_url?: string;
     rating: number;
     phone: string;
     joinedDate: string;

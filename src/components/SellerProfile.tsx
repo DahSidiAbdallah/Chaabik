@@ -6,6 +6,7 @@ import { ArrowLeft, User, Calendar, ShoppingBag } from 'lucide-react';
 import { ListingCard } from './ListingCard';
 import { Footer } from './Footer';
 import { formatTimeAgo } from '../lib/utils';
+import { AvatarUpload } from './AvatarUpload';
 
 export function SellerProfile() {
   const { id } = useParams<{ id: string }>();
@@ -136,9 +137,17 @@ export function SellerProfile() {
             <div className="px-6 py-8 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center space-x-5">
                 <div className="flex-shrink-0">
-                  <div className="h-20 w-20 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 flex items-center justify-center text-white text-2xl font-bold">
-                    {seller.name?.charAt(0) || '?'}
-                  </div>
+                  {seller.avatar_url ? (
+                    <img
+                      src={seller.avatar_url}
+                      alt={seller.name}
+                      className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400 shadow"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-3xl font-bold text-white border-2 border-yellow-400 shadow">
+                      {seller.name?.[0]?.toUpperCase() || '?'}
+                    </div>
+                  )}
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">{seller.name}</h1>
@@ -182,6 +191,7 @@ export function SellerProfile() {
                       is_sold={listing.is_sold}
                       seller={{
                         name: seller.name,
+                        avatar_url: seller.avatar_url,
                         rating: seller.rating || 5,
                         phone: seller.phone || '',
                         joinedDate: seller.created_at,
