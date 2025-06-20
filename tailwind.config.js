@@ -1,5 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  safelist: [
+    // For LanguageSwitcher dynamic classes
+    'bg-yellow-400', 'text-blue-600', 'text-gray-600', 'hover:bg-yellow-50',
+    // For useConditionStyles dynamic classes
+    'bg-gray-100', 'text-gray-800',
+    'bg-green-100', 'text-green-800',
+    'bg-teal-100', 'text-teal-800',
+    'bg-blue-100', 'text-blue-800',
+    'bg-yellow-100', 'text-yellow-800',
+    'bg-orange-100', 'text-orange-800',
+  ],
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
