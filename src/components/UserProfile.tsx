@@ -253,7 +253,7 @@ export function UserProfile() {
         <div className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
         </div>
-        <Footer />
+        
       </div>
     );
   }
@@ -281,8 +281,8 @@ export function UserProfile() {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow bg-gray-50 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-6">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <button
               onClick={() => navigate('/')}
               className="flex items-center text-gray-600 hover:text-gray-900"
@@ -293,7 +293,7 @@ export function UserProfile() {
             
             <Link 
               to="/add-product" 
-              className="bg-yellow-400 text-gray-800 px-4 py-2 rounded-md font-medium hover:bg-yellow-500 transition-colors flex items-center"
+              className="bg-yellow-400 text-gray-800 px-4 py-2 rounded-md font-medium hover:bg-yellow-500 transition-colors flex items-center justify-center w-full sm:w-auto"
             >
               <span className="mr-2">+</span>
               {t('product.addNew')}
@@ -302,14 +302,14 @@ export function UserProfile() {
 
           <div className="bg-white shadow rounded-lg overflow-hidden">
             {/* Profile Header */}
-            <div className="px-6 py-8 border-b border-gray-200 bg-gray-50">
-              <div className="flex items-center space-x-5">
-                <div className="flex-shrink-0">
+            <div className="px-4 py-6 sm:px-6 sm:py-8 border-b border-gray-200 bg-gray-50">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8">
+                <div className="flex-shrink-0 flex justify-center">
                   <div className="h-20 w-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white text-2xl font-bold">
                     {profile?.name?.charAt(0) || user?.email?.charAt(0) || '?'}
                   </div>
                 </div>
-                <div>
+                <div className="text-center sm:text-left">
                   <h1 className="text-2xl font-bold text-gray-900">{profile?.name || 'User'}</h1>
                   <p className="text-sm text-gray-500">
                     {t('product.memberSince')} {new Date(profile?.created_at || user?.created_at).toLocaleDateString()}
@@ -346,7 +346,7 @@ export function UserProfile() {
                   </Link>
                 </div>
               ) : (
-                <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
                   <table className="min-w-full divide-y divide-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
@@ -446,7 +446,7 @@ export function UserProfile() {
         </div>
       </div>
 
-      <Footer />
+      
 
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && (

@@ -197,7 +197,7 @@ export function SellerProfile() {
         </div>
       </div>
 
-      <Footer />
+      
     </div>
   );
 }

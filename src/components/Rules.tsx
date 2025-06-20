@@ -90,7 +90,7 @@ export function Rules() {
           </div>
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 }

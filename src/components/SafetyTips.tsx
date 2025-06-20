@@ -93,7 +93,7 @@ export function SafetyTips() {
           </div>
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 }

@@ -6,7 +6,6 @@ import { ListingCard } from './ListingCard';
 import { ListingDetailRow } from './ListingDetailRow';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
-import { Footer } from './Footer';
 import { categories, listings as staticListings } from '../data';
 import { Target, Plus, ChevronLeft, ChevronRight, ShieldCheck, CreditCard, Briefcase, UserCircle, BadgeCheck, Menu, X, List, LayoutGrid, Filter, SlidersHorizontal } from 'lucide-react';
 import { supabase, isAuthenticated } from '../lib/supabase';
@@ -964,7 +963,7 @@ export function HomePage() {
         )}
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

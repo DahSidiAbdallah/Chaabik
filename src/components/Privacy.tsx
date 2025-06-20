@@ -76,7 +76,7 @@ export function Privacy() {
           </div>
         </div>
       </div>
-      <Footer />
+   
     </div>
   );
 } 
