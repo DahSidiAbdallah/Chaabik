@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, getImageUrl } from '../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, User, Calendar, ShoppingBag } from 'lucide-react';
 import { ListingCard } from './ListingCard';
@@ -8,7 +8,9 @@ import { Footer } from './Footer';
 import { formatTimeAgo } from '../lib/utils';
 import { AvatarUpload } from './AvatarUpload';
 
+
 export function SellerProfile() {
+  const [avatarError, setAvatarError] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -18,6 +20,7 @@ export function SellerProfile() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setAvatarError(false);
     async function fetchSellerProfile() {
       if (!id) {
         setError('Seller ID is required');
@@ -40,6 +43,8 @@ export function SellerProfile() {
           setError('Seller not found');
           return;
         }
+
+        
         
         setSeller(profile);
         
@@ -137,16 +142,17 @@ export function SellerProfile() {
             <div className="px-6 py-8 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center space-x-5">
                 <div className="flex-shrink-0">
-                  {seller.avatar_url ? (
-                    <img
-                      src={seller.avatar_url}
-                      alt={seller.name}
-                      className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400 shadow"
-                    />
-                  ) : (
+                  {(!seller.avatar_url || avatarError) ? (
                     <div className="w-20 h-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-3xl font-bold text-white border-2 border-yellow-400 shadow">
                       {seller.name?.[0]?.toUpperCase() || '?'}
                     </div>
+                  ) : (
+                    <img
+                      src={getImageUrl(seller.avatar_url)}
+                      alt={seller.name}
+                      className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400 shadow"
+                      onError={() => setAvatarError(true)}
+                    />
                   )}
                 </div>
                 <div>

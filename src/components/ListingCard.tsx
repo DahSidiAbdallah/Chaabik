@@ -113,28 +113,7 @@ export function ListingCard({
           </h3>
           
           <div className="flex flex-wrap items-center gap-y-1 mb-1 xs:mb-2">
-            {/* Make seller name a link to their profile */}
-            {seller.id ? (
-              <Link 
-                to={`/seller/${seller.id}`}
-                className="flex items-center mr-3 w-full xs:w-auto hover:text-blue-600"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gray-200 mr-1 overflow-hidden flex-shrink-0">
-                  {/* Placeholder for seller avatar */}
-                  <div className="w-full h-full bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
-                </div>
-                <span className="text-xs text-gray-600 truncate max-w-[120px]">{seller.name}</span>
-              </Link>
-            ) : (
-              <div className="flex items-center mr-3 w-full xs:w-auto">
-                <div className="w-4 h-4 xs:w-5 xs:h-5 rounded-full bg-gray-200 mr-1 overflow-hidden flex-shrink-0">
-                  {/* Placeholder for seller avatar */}
-                  <div className="w-full h-full bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
-                </div>
-                <span className="text-xs text-gray-600 truncate max-w-[120px]">{seller.name}</span>
-              </div>
-            )}
+            {/* Seller info removed for homepage card, only show location */}
             
             <div className="flex items-center text-xs text-gray-500">
               <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />

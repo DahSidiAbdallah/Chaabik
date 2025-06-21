@@ -11,6 +11,7 @@ import { Target, Plus, ChevronLeft, ChevronRight, ShieldCheck, CreditCard, Brief
 import { supabase, isAuthenticated } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 import ChaabikLogo from '../assets/Chaabik.png';
+import background from '../assets/hero_background.png';
 
 
 export function HomePage() {
@@ -531,7 +532,7 @@ export function HomePage() {
           <div className="flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-6 md:mb-0">
               <h1 className="text-2xl xs:text-3xl md:text-5xl font-bold mb-3 sm:mb-4">
-                <span className="text-yellow-400">CHAABIK</span><br />
+                
                 {t('hero.title')}
               </h1>
               <p className="text-sm xs:text-md md:text-xl mb-4 sm:mb-6 max-w-md">

@@ -43,6 +43,7 @@ function ConfirmDialog({ isOpen, onConfirm, onCancel }: ConfirmDialogProps) {
 }
 
 export function UserMenu() {
+  const [avatarError, setAvatarError] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +53,10 @@ export function UserMenu() {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(undefined);
   const [showAvatarUpload, setShowAvatarUpload] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [avatarUrl]);
 
   useEffect(() => {
     async function fetchUserProducts() {
@@ -129,16 +134,17 @@ export function UserMenu() {
           onClick={() => setIsOpen(!isOpen)}
           className="flex items-center gap-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
         >
-          {avatarUrl ? (
+          {(!avatarUrl || avatarError) ? (
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
+              {currentUser?.user_metadata?.name?.charAt(0)?.toUpperCase() || currentUser?.user_metadata?.email?.charAt(0)?.toUpperCase() || <User className="w-5 h-5" />}
+            </div>
+          ) : (
             <img
               src={getImageUrl(avatarUrl)}
               alt="Avatar"
-              className="w-8 h-8 rounded-full object-cover border-2 border-yellow-400"
+              className="w-9 h-9 rounded-full object-cover border-2 border-yellow-400"
+              onError={() => setAvatarError(true)}
             />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
-              {currentUser?.user_metadata?.name?.charAt(0) || currentUser?.user_metadata?.email?.charAt(0) || <User className="w-5 h-5" />}
-            </div>
           )}
         </button>
 
@@ -151,16 +157,17 @@ export function UserMenu() {
                 className="flex items-center gap-3"
                 onClick={() => setIsOpen(false)}
               >
-                {avatarUrl ? (
+                {(!avatarUrl || avatarError) ? (
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
+                    {currentUser?.user_metadata?.name?.charAt(0)?.toUpperCase() || currentUser?.user_metadata?.email?.charAt(0)?.toUpperCase() || <User className="w-5 h-5" />}
+                  </div>
+                ) : (
                   <img
                     src={getImageUrl(avatarUrl)}
                     alt="Avatar"
                     className="w-10 h-10 rounded-full object-cover border-2 border-yellow-400"
+                    onError={() => setAvatarError(true)}
                   />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-white font-bold">
-                    {currentUser?.user_metadata?.name?.charAt(0) || currentUser?.user_metadata?.email?.charAt(0) || <User className="w-5 h-5" />}
-                  </div>
                 )}
                 <div>
                   <div className="font-medium text-gray-900">{currentUser?.user_metadata?.name || currentUser?.user_metadata?.email || t('auth.myAccount')}</div>

@@ -10,6 +10,7 @@ interface AvatarUploadProps {
 }
 
 export function AvatarUpload({ userId, avatarUrl, onUpload }: AvatarUploadProps) {
+  const [avatarError, setAvatarError] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,11 +53,18 @@ export function AvatarUpload({ userId, avatarUrl, onUpload }: AvatarUploadProps)
 
   return (
     <div className="relative inline-block">
-      <img
-        src={avatarUrl ? getImageUrl(avatarUrl) : '/placeholder-avatar.png'}
-        alt="Avatar"
-        className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400"
-      />
+      {(!avatarUrl || avatarError) ? (
+  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 flex items-center justify-center text-3xl font-bold text-white border-2 border-yellow-400">
+    {userId?.[0]?.toUpperCase() || '?'}
+  </div>
+) : (
+  <img
+    src={getImageUrl(avatarUrl)}
+    alt="Avatar"
+    className="w-20 h-20 rounded-full object-cover border-2 border-yellow-400"
+    onError={() => setAvatarError(true)}
+  />
+) }
       <button
         type="button"
         className="absolute bottom-0 right-0 bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 shadow-lg focus:outline-none"
