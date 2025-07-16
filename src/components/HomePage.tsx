@@ -758,7 +758,7 @@ export function HomePage() {
                 <p className="text-gray-500 text-sm sm:text-base">{t('common.loading')}</p>
               </div>
             ) : filteredListings.length > 0 ? (
-              <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2' : 'space-y-2'}`}>
+              <div className={`${viewMode === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4' : 'space-y-2'}`}>
                 {filteredListings.map((listing) => (
                   viewMode === 'grid' ? (
                     <ListingCard
