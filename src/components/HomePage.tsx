@@ -758,7 +758,7 @@ export function HomePage() {
                 <p className="text-gray-500 text-sm sm:text-base">{t('common.loading')}</p>
               </div>
             ) : filteredListings.length > 0 ? (
-              <div className={`${viewMode === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4' : 'space-y-2'}`}>
+              <div className={`${viewMode === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4' : 'space-y-2'}`}>
                 {filteredListings.map((listing) => (
                   viewMode === 'grid' ? (
                     <ListingCard
@@ -810,20 +810,34 @@ export function HomePage() {
             <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
               <h2 className="text-xl xs:text-2xl font-bold text-gray-900 mb-4 xs:mb-6 sm:mb-8">{t('listings.recent')}</h2>
               
-              <div className={`${viewMode === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4' : 'space-y-2'}`}>
+              <div className={`${viewMode === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4' : 'space-y-2'}`}>
                 {recentListings.map((listing) => (
-                  <ListingCard
-                    key={listing.id}
-                    id={listing.id}
-                    title={listing.title}
-                    description={listing.description}
-                    price={listing.price}
-                    location={listing.location}
-                    image={listing.image}
-                    condition={listing.condition}
-                    is_sold={listing.is_sold}
-                    seller={listing.seller}
-                  />
+                  viewMode === 'grid' ? (
+                    <ListingCard
+                      key={`${listing.id}-recent-grid`}
+                      id={listing.id}
+                      title={listing.title}
+                      description={listing.description}
+                      price={listing.price}
+                      location={listing.location}
+                      image={listing.image}
+                      condition={listing.condition}
+                      is_sold={listing.is_sold}
+                      seller={listing.seller}
+                    />
+                  ) : (
+                    <ListingDetailRow
+                      key={`${listing.id}-recent-list`}
+                      id={listing.id}
+                      title={listing.title}
+                      price={listing.price}
+                      location={listing.location}
+                      image={listing.image}
+                      condition={listing.condition}
+                      createdAt={listing.createdAt}
+                      is_sold={listing.is_sold}
+                    />
+                  )
                 ))}
               </div>
             </div>
