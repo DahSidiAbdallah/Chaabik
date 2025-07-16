@@ -758,7 +758,7 @@ export function HomePage() {
                 <p className="text-gray-500 text-sm sm:text-base">{t('common.loading')}</p>
               </div>
             ) : filteredListings.length > 0 ? (
-              <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-5 lg:gap-6' : 'space-y-4'}`}>
+              <div className={`${viewMode === 'grid' ? 'grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3' : 'space-y-4'}`}>
                 {filteredListings.map((listing) => (
                   viewMode === 'grid' ? (
                     <ListingCard
@@ -810,7 +810,7 @@ export function HomePage() {
             <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
               <h2 className="text-xl xs:text-2xl font-bold text-gray-900 mb-4 xs:mb-6 sm:mb-8">{t('listings.recent')}</h2>
               
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 xs:gap-4 sm:gap-5 lg:gap-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                 {recentListings.map((listing) => (
                   <ListingCard
                     key={listing.id}
