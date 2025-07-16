@@ -810,7 +810,7 @@ export function HomePage() {
             <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
               <h2 className="text-xl xs:text-2xl font-bold text-gray-900 mb-4 xs:mb-6 sm:mb-8">{t('listings.recent')}</h2>
               
-              <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+              <div className={`${viewMode === 'grid' ? 'grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4' : 'space-y-2'}`}>
                 {recentListings.map((listing) => (
                   <ListingCard
                     key={listing.id}
