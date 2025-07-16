@@ -15,6 +15,12 @@ interface ListingDetailRowProps {
   condition: string;
   createdAt?: string;
   is_sold?: boolean;
+  seller?: {
+    name: string;
+    totalSales: number;
+    joinedDate?: string;
+    phone?: string;
+  };
 }
 
 export function ListingDetailRow({
@@ -26,6 +32,7 @@ export function ListingDetailRow({
   condition,
   createdAt,
   is_sold = false,
+  seller,
 }: ListingDetailRowProps) {
   const { t } = useTranslation();
   const { className: conditionClassName, Icon: ConditionIcon } = useConditionStyles(condition);
@@ -51,7 +58,6 @@ export function ListingDetailRow({
             onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder-image.jpg'; }}
           />
         </div>
-        
         {/* Main Details Container - Ensure it has flex-grow */}
         <div className="p-3 sm:p-4 flex-grow flex flex-col w-full overflow-hidden sm:h-full sm:relative">
           {/* Upper part - Title, Price, Time Ago */}
@@ -71,6 +77,12 @@ export function ListingDetailRow({
                     {t('product.soldOut')}
                  </div>
               )}
+              {/* Vendor sales count */}
+              {seller && (
+                <div className="text-xs text-gray-500 mt-1">
+                  <span>{seller.totalSales} ventes</span>
+                </div>
+              )}
             </div>
             {timeAgo && (
               <div className="flex-shrink-0 text-xs sm:text-sm text-gray-500 whitespace-nowrap pl-2 sm:pl-3 pt-0.5">
@@ -81,10 +93,8 @@ export function ListingDetailRow({
               </div>
             )}
           </div>
-
           {/* Spacer to push content below down */}
           <div className="flex-grow"></div>
-
           {/* Location and Condition (normal flow, hidden on sm+ group-hover) */}
           <div className="text-xs text-gray-500 mt-1 sm:mt-2 flex-shrink-0 sm:group-hover:hidden">
             <div className="flex items-center mb-0.5 sm:mb-1">
@@ -96,13 +106,11 @@ export function ListingDetailRow({
               {t(`product.condition${condition.replace(/\s/g, '')}`)}
             </span>
           </div>
-
           {/* View Details Link - Absolutely Positioned on sm+ on group-hover */}
           <span className="hidden sm:group-hover:flex absolute bottom-3 right-3 sm:bottom-4 sm:right-4 items-center text-blue-600 font-semibold whitespace-nowrap text-sm p-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-md shadow-sm ring-1 ring-black ring-opacity-5">
             {t('common.viewDetails')}
             <ChevronRight className="w-4 h-4 ml-0.5" />
           </span>
-          
           {/* Mobile View Details Button (normal flow, takes full width, styled) */}
           <div className="sm:hidden mt-2 pt-2 border-t border-gray-100">
              <span className="flex items-center justify-center text-blue-600 font-semibold text-xs py-1">
@@ -110,9 +118,7 @@ export function ListingDetailRow({
                 <ChevronRight className="w-4 h-4 ml-0.5" />
             </span>
           </div>
-
         </div>
-
         {is_sold && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 pointer-events-none rounded-lg">
             <div className="bg-red-700 text-white px-5 py-1.5 rounded-md text-base sm:text-lg font-bold transform -rotate-12 shadow-2xl border-2 border-white/80">
