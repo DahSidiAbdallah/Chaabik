@@ -73,9 +73,9 @@ export function ListingCard({
 
   return (
     <Link to={`/product/${id}`} className="block group">
-      <div className="bg-transparent flex flex-col items-center w-full max-w-xs min-w-0 group relative">
+      <div className="bg-transparent flex flex-col w-full min-w-0 group relative">
         {/* Square image container with hover overlay */}
-        <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-black/20">
+        <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 border border-black/20">
           <img
             src={imageUrl}
             alt={title}
